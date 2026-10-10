@@ -77,6 +77,31 @@
             }
         }
 
+        /* Landscape Mobile Mode (आड़ी स्क्रीन) */
+        @media screen and (orientation: landscape) and (max-height: 520px) {
+            header {
+                padding-top: 0.2rem !important;
+                padding-bottom: 0.2rem !important;
+            }
+            #winnerTickerBanner {
+                display: none !important;
+            }
+            .game-panel {
+                padding: 0.4rem !important;
+                border-radius: 0.75rem !important;
+            }
+        }
+
+        @keyframes phoneRotateAnim {
+            0%, 20% { transform: rotate(0deg); }
+            50%, 70% { transform: rotate(90deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .phone-rotate-icon {
+            animation: phoneRotateAnim 2.5s infinite ease-in-out;
+            display: inline-block;
+        }
+
         /* 3D Coin Flip Animation */
         .coin-3d {
             width: 100px;
@@ -702,7 +727,22 @@
 
 <body class="text-slate-100 font-sans min-h-screen antialiased select-none flex flex-col">
 
-    <!-- TOP NAVIGATION & WALLET BAR -->
+    <!-- MOBILE LANDSCAPE ROTATE ASSISTANT BANNER (Prompt to turn phone sideways) -->
+    <div id="landscapeRotateBanner" class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-slate-950 px-3 py-1.5 flex items-center justify-between text-xs font-bold shadow-lg border-b border-yellow-300 sm:hidden select-none">
+        <div class="flex items-center gap-2">
+            <span class="phone-rotate-icon text-lg inline-block">📱</span>
+            <span class="leading-tight">फ़ोन को आड़ा (Rotate) करें ➔ Full Casino View!</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="toggleLandscapeFullscreen()" class="bg-slate-950 text-amber-300 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase shadow active:scale-95 cursor-pointer">
+                Rotate ⛶
+            </button>
+            <button onclick="document.getElementById('landscapeRotateBanner').remove()" class="text-slate-950 hover:text-black font-black text-sm px-1 cursor-pointer">
+                ✕
+            </button>
+        </div>
+    </div>
+
     <!-- TOP NAVIGATION & WALLET BAR -->
     <header class="bg-casinoCard/95 border-b border-casinoBorder px-2.5 sm:px-5 py-2 sm:py-2.5 sticky top-0 z-40 backdrop-blur-md shadow-2xl space-y-1.5 sm:space-y-2 w-full max-w-full overflow-hidden">
         <!-- TOP ROW: BRAND & USER WALLET -->
@@ -748,7 +788,7 @@
                 </div>
 
                 <!-- Player Daily Streak Bonus Button -->
-                <button onclick="openDailyStreakModal()" title="Daily Login Bonus / 7-दिन का मुफ़्त बोनस"
+                <button id="headerDailyBonusBtn" onclick="openDailyStreakModal()" title="Daily Login Bonus / 7-दिन का मुफ़्त बोनस"
                     class="px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:brightness-110 active:scale-95 text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs transition flex items-center gap-1 shadow-[0_0_12px_rgba(245,158,11,0.4)] border border-yellow-300/60 cursor-pointer animate-pulse">
                     <span class="text-xs sm:text-sm">🎁</span>
                     <span class="hidden sm:inline">Bonus</span>
@@ -766,6 +806,13 @@
                     class="hidden px-2 sm:px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black rounded-xl text-xs transition flex items-center gap-1 shadow-md hover:brightness-110 active:scale-95">
                     <span>👑 Admin</span>
                 </a>
+
+                <!-- Rotate / Landscape Mode Button -->
+                <button onclick="toggleLandscapeFullscreen()" title="Toggle Landscape (आड़ी स्क्रीन) / Fullscreen"
+                    class="p-1 sm:px-2.5 sm:py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 font-bold rounded-xl text-xs transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer">
+                    <span class="text-xs sm:text-sm">⛶</span>
+                    <span class="hidden md:inline">Rotate</span>
+                </button>
 
                 <!-- Rules Button -->
                 <button onclick="openRulesModal()" title="View Game Rules"
@@ -835,7 +882,7 @@
                     <span class="text-amber-300">Loading live winner stream...</span>
                 </div>
             </div>
-            <button onclick="toggleLiveChatDrawer()" title="Open VIP Community Live Chat" class="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-900/60 hover:bg-purple-800 border border-purple-500/40 text-purple-200 text-[10px] font-mono font-bold shrink-0 transition cursor-pointer">
+            <button id="headerChatBtn" onclick="toggleLiveChatDrawer()" title="Open VIP Community Live Chat" class="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-900/60 hover:bg-purple-800 border border-purple-500/40 text-purple-200 text-[10px] font-mono font-bold shrink-0 transition cursor-pointer">
                 <span>💬 VIP Chat</span>
                 <span id="headerChatOnlineCount" class="text-emerald-400">428 Live</span>
             </button>
@@ -3490,6 +3537,37 @@
     <!-- ============================================== -->
     <script>
         const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
+
+        async function toggleLandscapeFullscreen() {
+            try {
+                const docEl = document.documentElement;
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    if (docEl.requestFullscreen) {
+                        await docEl.requestFullscreen();
+                    } else if (docEl.webkitRequestFullscreen) {
+                        await docEl.webkitRequestFullscreen();
+                    }
+                    if (screen.orientation && screen.orientation.lock) {
+                        try {
+                            await screen.orientation.lock('landscape');
+                        } catch(e) {}
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    }
+                    if (screen.orientation && screen.orientation.unlock) {
+                        try {
+                            screen.orientation.unlock();
+                        } catch(e) {}
+                    }
+                }
+            } catch (err) {
+                console.log("Landscape lock error / not in PWA:", err);
+            }
+        }
         let currentUser = { username: "player1", role: "user", balance: 1000 };
         let authToken = "";
         let localWallet = 1000;
@@ -3905,6 +3983,24 @@
                 initFunRouletteArena();
             }
 
+            // Hide Bonus & Chat options when inside a game
+            const floatBonus = document.getElementById('btnDailyStreakFloat');
+            if (floatBonus) floatBonus.classList.add('hidden');
+
+            const floatChat = document.getElementById('btnOpenLiveChat');
+            if (floatChat) floatChat.classList.add('hidden');
+
+            const headerBonus = document.getElementById('headerDailyBonusBtn');
+            if (headerBonus) headerBonus.classList.add('hidden');
+
+            const headerChat = document.getElementById('headerChatBtn');
+            if (headerChat) headerChat.classList.add('hidden');
+
+            const cDrawer = document.getElementById('chatDrawer');
+            if (cDrawer && !cDrawer.classList.contains('translate-x-full')) {
+                cDrawer.classList.add('translate-x-full');
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -3939,6 +4035,19 @@
             if (gfs) gfs.classList.add('hidden');
             if (gbs) gbs.classList.add('hidden');
             if (gld) gld.classList.add('hidden');
+
+            // Restore Bonus & Chat options when back in Lobby
+            const floatBonus = document.getElementById('btnDailyStreakFloat');
+            if (floatBonus) floatBonus.classList.remove('hidden');
+
+            const floatChat = document.getElementById('btnOpenLiveChat');
+            if (floatChat) floatChat.classList.remove('hidden');
+
+            const headerBonus = document.getElementById('headerDailyBonusBtn');
+            if (headerBonus) headerBonus.classList.remove('hidden');
+
+            const headerChat = document.getElementById('headerChatBtn');
+            if (headerChat) headerChat.classList.remove('hidden');
 
             document.getElementById('lobbyContainer').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
