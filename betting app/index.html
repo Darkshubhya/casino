@@ -3,7 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#060410">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
     <title>Royal Games - 50+ Real Casino, Desi, Board & Skill Games</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,11 +44,37 @@
     </script>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             background-color: #060410;
             background-image: 
                 radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.16) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 50%);
+        }
+
+        @media (max-width: 640px) {
+            .game-panel {
+                padding: 0.6rem !important;
+                border-radius: 1.25rem !important;
+            }
+            .roulette-felt-bg {
+                padding: 0.5rem !important;
+            }
+            .fr-grid-table, .overflow-x-auto {
+                -webkit-overflow-scrolling: touch !important;
+            }
         }
 
         /* 3D Coin Flip Animation */
@@ -673,81 +704,81 @@
 
     <!-- TOP NAVIGATION & WALLET BAR -->
     <!-- TOP NAVIGATION & WALLET BAR -->
-    <header class="bg-casinoCard/95 border-b border-casinoBorder px-3 sm:px-5 py-2.5 sticky top-0 z-40 backdrop-blur-md shadow-2xl space-y-2">
+    <header class="bg-casinoCard/95 border-b border-casinoBorder px-2.5 sm:px-5 py-2 sm:py-2.5 sticky top-0 z-40 backdrop-blur-md shadow-2xl space-y-1.5 sm:space-y-2 w-full max-w-full overflow-hidden">
         <!-- TOP ROW: BRAND & USER WALLET -->
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3 w-full">
             <!-- Brand Logo -->
-            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="returnToLobby()" title="Return to Lobby">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-purple-950 font-black flex items-center justify-center text-xl shadow-lg border border-amber-300/40 shrink-0">
+            <div class="flex items-center gap-1.5 sm:gap-3 cursor-pointer select-none shrink-0" onclick="returnToLobby()" title="Return to Lobby">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-purple-950 font-black flex items-center justify-center text-lg sm:text-xl shadow-lg border border-amber-300/40 shrink-0">
                     👑
                 </div>
                 <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-base sm:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 tracking-wider">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-sm sm:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 tracking-wider">
                             ROYAL ARENA
                         </span>
-                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold uppercase tracking-wider hidden sm:inline-block">
-                            VIP LIVE
+                        <span class="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold uppercase tracking-wider hidden xs:inline-block">
+                            VIP
                         </span>
                     </div>
-                    <span class="text-[10px] text-slate-400 font-mono block -mt-0.5">8 Provably Fair Games</span>
+                    <span class="text-[9px] text-slate-400 font-mono hidden sm:block -mt-0.5">8 Provably Fair Games</span>
                 </div>
             </div>
 
             <!-- User Info, Read-Only Balance, and Controls -->
-            <div class="flex items-center gap-2 sm:gap-3">
+            <div class="flex items-center gap-1 sm:gap-2.5 shrink-0">
                 <!-- User Profile Badge -->
-                <div id="userProfileChip" onclick="openLoginModal()" title="Click to view profile or switch account" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800/90 border border-slate-700/80 px-2.5 py-1.5 rounded-2xl flex items-center gap-2 transition shadow-inner">
-                    <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white font-black text-xs flex items-center justify-center shadow">
+                <div id="userProfileChip" onclick="openLoginModal()" title="Click to view profile or switch account" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800/90 border border-slate-700/80 p-1 sm:px-2.5 sm:py-1.5 rounded-xl sm:rounded-2xl flex items-center gap-1.5 transition shadow-inner">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white font-black text-xs flex items-center justify-center shadow">
                         <span id="userInitial">P</span>
                     </div>
-                    <div class="text-left leading-tight hidden sm:block">
+                    <div class="text-left leading-tight hidden md:block">
                         <span id="userDisplayName" class="text-xs font-bold text-slate-100 block">player1</span>
                         <span id="userRoleBadge" class="text-[9px] font-mono text-amber-400 font-bold uppercase">VIP PLAYER</span>
                     </div>
                 </div>
 
                 <!-- Read-Only Player Balance (NO +$500 BUTTON!) -->
-                <div class="bg-slate-950/90 border-2 border-emerald-500/40 rounded-2xl px-3.5 py-1.5 flex items-center gap-2.5 shadow-lg" title="Your live game wallet balance (Non-editable)">
-                    <span class="text-lg">🪙</span>
+                <div class="bg-slate-950/90 border-2 border-emerald-500/40 rounded-xl sm:rounded-2xl px-2 sm:px-3.5 py-1 sm:py-1.5 flex items-center gap-1 sm:gap-2 shadow-lg" title="Your live game wallet balance (Non-editable)">
+                    <span class="text-sm sm:text-base">🪙</span>
                     <div class="leading-tight">
-                        <span class="text-[9px] text-slate-400 font-mono uppercase font-bold block leading-none">Wallet Balance</span>
-                        <span class="text-sm sm:text-base font-black text-emerald-400 font-mono tracking-tight" id="walletBalance">$1,000.00</span>
+                        <span class="text-[8px] text-slate-400 font-mono uppercase font-bold hidden sm:block leading-none">Wallet</span>
+                        <span class="text-xs sm:text-base font-black text-emerald-400 font-mono tracking-tight" id="walletBalance">$1,000.00</span>
                     </div>
                 </div>
 
                 <!-- Player Daily Streak Bonus Button -->
                 <button onclick="openDailyStreakModal()" title="Daily Login Bonus / 7-दिन का मुफ़्त बोनस"
-                    class="px-2.5 sm:px-3.5 py-1.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:brightness-110 active:scale-95 text-slate-950 font-black rounded-2xl text-xs transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.4)] border border-yellow-300/60 cursor-pointer animate-pulse">
-                    <span class="text-sm">🎁</span>
-                    <span class="hidden sm:inline">Daily Bonus</span>
-                    <span class="sm:hidden">Bonus</span>
+                    class="px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:brightness-110 active:scale-95 text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs transition flex items-center gap-1 shadow-[0_0_12px_rgba(245,158,11,0.4)] border border-yellow-300/60 cursor-pointer animate-pulse">
+                    <span class="text-xs sm:text-sm">🎁</span>
+                    <span class="hidden sm:inline">Bonus</span>
                 </button>
 
                 <!-- Player Withdraw Button -->
                 <button onclick="openWithdrawModal()" title="Withdraw Funds / पैसे निकालें"
-                    class="px-2.5 sm:px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 hover:brightness-110 active:scale-95 text-white font-black rounded-2xl text-xs transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.35)] border border-emerald-400/50 cursor-pointer">
-                    <span class="text-sm">💸</span>
-                    <span>Withdraw</span>
+                    class="px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 hover:brightness-110 active:scale-95 text-white font-black rounded-xl sm:rounded-2xl text-xs transition flex items-center gap-1 shadow-[0_0_12px_rgba(16,185,129,0.35)] border border-emerald-400/50 cursor-pointer">
+                    <span class="text-xs sm:text-sm">💸</span>
+                    <span class="hidden sm:inline">Withdraw</span>
                 </button>
 
                 <!-- Conditional Admin Portal Link (Hidden for standard players) -->
                 <a id="headerAdminLink" href="/admin" target="_blank" title="Master Admin Console"
-                    class="hidden px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black rounded-xl text-xs transition flex items-center gap-1 shadow-md hover:brightness-110 active:scale-95">
+                    class="hidden px-2 sm:px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black rounded-xl text-xs transition flex items-center gap-1 shadow-md hover:brightness-110 active:scale-95">
                     <span>👑 Admin</span>
                 </a>
 
                 <!-- Rules Button -->
                 <button onclick="openRulesModal()" title="View Game Rules"
-                    class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
-                    <span>📖 Rules</span>
+                    class="p-1 sm:px-2.5 sm:py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold rounded-xl text-xs transition flex items-center gap-1 shadow-sm">
+                    <span class="text-xs sm:text-sm">📖</span>
+                    <span class="hidden md:inline">Rules</span>
                 </button>
 
                 <!-- Logout Button -->
                 <button onclick="handleUserLogout()" title="Log Out / Switch Account"
-                    class="px-2.5 py-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-600/50 text-rose-300 font-bold rounded-xl text-xs transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer">
-                    <span>🚪</span>
-                    <span class="hidden md:inline">Logout</span>
+                    class="p-1 sm:px-2.5 sm:py-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-600/50 text-rose-300 font-bold rounded-xl text-xs transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer">
+                    <span class="text-xs sm:text-sm">🚪</span>
+                    <span class="hidden lg:inline">Logout</span>
                 </button>
             </div>
         </div>
@@ -3458,7 +3489,7 @@
     <!-- JAVASCRIPT LOGIC & 50+ REAL GAME ENGINES -->
     <!-- ============================================== -->
     <script>
-        const API_BASE = window.location.origin.includes('5000') ? '' : 'http://localhost:5000';
+        const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
         let currentUser = { username: "player1", role: "user", balance: 1000 };
         let authToken = "";
         let localWallet = 1000;
