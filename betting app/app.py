@@ -218,6 +218,10 @@ def serve_login():
 def serve_admin():
     return send_from_directory('.', 'admin.html')
 
+@app.route('/manifest.json')
+def serve_manifest():
+    return send_from_directory('.', 'manifest.json', mimetype='application/json')
+
 
 # ==========================================
 # AUTHENTICATION API
