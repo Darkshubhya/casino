@@ -1,0 +1,209 @@
+Created At: 2026-10-02T15:23:24+05:30
+Completed At: 2026-10-02T15:23:24+05:30
+File Path: `file:///c:/Users/vedan/OneDrive/Documents/betting%20app/index.html`
+Total Lines: 2817
+Total Bytes: 158346
+Showing lines 1650 to 1850
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1650:             coneGrad.addColorStop(1, '#664205');
+1651: 
+1652:             rouletteCtx.beginPath();
+1653:             rouletteCtx.arc(0, 0, R_cone, 0, 2 * Math.PI);
+1654:             rouletteCtx.fillStyle = coneGrad;
+1655:             rouletteCtx.fill();
+1656:             rouletteCtx.strokeStyle = '#3a2202';
+1657:             rouletteCtx.lineWidth = 2;
+1658:             rouletteCtx.stroke();
+1659: 
+1660:             // Spokes
+1661:             for (let s = 0; s < 8; s++) {
+1662:                 const sAngle = (s * Math.PI) / 4;
+1663:                 rouletteCtx.beginPath();
+1664:                 rouletteCtx.moveTo(0, 0);
+1665:                 rouletteCtx.lineTo(Math.cos(sAngle) * (R_cone - 6), Math.sin(sAngle) * (R_cone - 6));
+1666:                 rouletteCtx.strokeStyle = '#FFEAA7';
+1667:                 rouletteCtx.lineWidth = 3;
+1668:                 rouletteCtx.stroke();
+1669:             }
+1670: 
+1671:             rouletteCtx.restore(); // Restore wheel rotation
+1672: 
+1673:             // 5. The Silver Roulette Ball
+1674:             if (isRouletteSpinning || ballProgress < 1.0) {
+1675:                 const currentBallR = R_pocketsInner + (R_ballTrack - R_pocketsInner) * ballProgress;
+1676:                 const bx = cx + Math.cos(ballRot) * currentBallR;
+1677:                 const by = cy + Math.sin(ballRot) * currentBallR;
+1678: 
+1679:                 // Ball drop shadow
+1680:                 rouletteCtx.beginPath();
+1681:                 rouletteCtx.arc(bx + 2, by + 3, 6, 0, 2 * Math.PI);
+1682:                 rouletteCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+1683:                 rouletteCtx.fill();
+1684: 
+1685:                 // Metallic Silver Ball
+1686:                 const ballGrad = rouletteCtx.createRadialGradient(bx - 2, by - 2, 1, bx, by, 6);
+1687:                 ballGrad.addColorStop(0, '#FFFFFF');
+1688:                 ballGrad.addColorStop(0.5, '#E2E8F0');
+1689:                 ballGrad.addColorStop(1, '#64748B');
+1690: 
+1691:                 rouletteCtx.beginPath();
+1692:                 rouletteCtx.arc(bx, by, 6, 0, 2 * Math.PI);
+1693:                 rouletteCtx.fillStyle = ballGrad;
+1694:                 rouletteCtx.fill();
+1695:                 rouletteCtx.strokeStyle = '#FFFFFF';
+1696:                 rouletteCtx.lineWidth = 1;
+1697:                 rouletteCtx.stroke();
+1698:             }
+1699:         }
+1700: 
+1701:         async function confirmRouletteBetAndSpin(isManual = false) {
+1702:             if (isRouletteSpinning || roulettePhase !== 'BETTING') return;
+1703: 
+1704:             // If manual click but no bets placed, guide the user
+1705:             if (isManual && totalBoardBet <= 0) {
+1706:                 showGeneralModal("Place Bet", "Please place at least one chip on the table, or wait for the auto-spin countdown.", "⚠️");
+1707:                 return;
+1708:             }
+1709: 
+1710:             roulettePhase = 'SPINNING';
+1711:             isRouletteSpinning = true;
+1712:             document.getElementById('btnRouletteBetOk').disabled = true;
+1713:             document.getElementById('btnRouletteTake').disabled = true;
+1714: 
+1715:             // Update Phase Badge
+1716:             const phaseBadge = document.getElementById('roulettePhaseBadge');
+1717:             if (phaseBadge) {
+1718:                 phaseBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-mono font-bold flex items-center gap-1.5 shadow-sm";
+1719:                 phaseBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400 animate-ping"></span> WHEEL SPINNING`;
+1720:             }
+1721: 
+1722:             // Remove any previous highlight
+1723:             document.querySelectorAll('.winner-cell-highlight').forEach(el => el.classList.remove('winner-cell-highlight'));
+1724: 
+1725:             const statusBanner = document.getElementById('rouletteStatusBanner');
+1726:             statusBanner.innerText = totalBoardBet > 0 ? "Wheel is spinning... Good luck!" : "Wheel is spinning in real-time (Spectating)...";
+1727:             statusBanner.className = "mt-2 text-center text-xs font-serif font-black text-amber-300 tracking-wider py-1 border-t border-amber-500/30 animate-pulse";
+1728: 
+1729:             // Call Python Backend API
+1730:             const res = await apiRequest('/api/fun_roulette/spin', 'POST', {
+1731:                 bets: placedBets,
+1732:                 total_bet: totalBoardBet
+1733:             });
+1734: 
+1735:             let winningNumber = 0;
+1736:             let totalWon = 0;
+1737:             let winningBetsList = [];
+1738: 
+1739:             if (res && res.status === 'success') {
+1740:                 winningNumber = res.winning_number;
+1741:                 totalWon = res.total_won;
+1742:                 winningBetsList = res.winning_bets;
+1743:                 if (res.balance !== undefined) currentUser.balance = res.balance;
+1744:                 if (res.history) updateRouletteHistoryUI(res.history);
+1745:             } else {
+1746:                 // Standalone Fallback using true client crypto randomness (Provably Unpredictable)
+1747:                 winningNumber = (window.crypto && window.crypto.getRandomValues) 
+1748:                     ? window.crypto.getRandomValues(new Uint32Array(1))[0] % 19
+1749:                     : Math.floor(Math.random() * 19);
+1750:                 totalWon = calculateLocalRouletteWinnings(winningNumber);
+1751:                 localWallet += totalWon;
+1752:                 currentUser.balance = localWallet;
+1753:             }
+1754: 
+1755:             // Animate realistic 3D wheel & ball physics
+1756:             animateRouletteSpin(winningNumber, totalWon);
+1757:         }
+1758: 
+1759:         function calculateLocalRouletteWinnings(num) {
+1760:             let won = 0;
+1761:             for (let [k, amt] of Object.entries(placedBets)) {
+1762:                 if (k === `num_${num}`) won += amt * 18;
+1763:                 else if (k === 'row_1' && [3,6,9,12,15,18].includes(num)) won += amt * 3;
+1764:                 else if (k === 'row_2' && [2,5,8,11,14,17].includes(num)) won += amt * 3;
+1765:                 else if (k === 'row_3' && [1,4,7,10,13,16].includes(num)) won += amt * 3;
+1766:                 else if (k === 'first_6' && (num >= 1 && num <= 6)) won += amt * 3;
+1767:                 else if (k === 'second_6' && (num >= 7 && num <= 12)) won += amt * 3;
+1768:                 else if (k === 'third_6' && (num >= 13 && num <= 18)) won += amt * 3;
+1769:                 else if (k === 'low_1_9' && (num >= 1 && num <= 9)) won += amt * 2;
+1770:                 else if (k === 'high_10_18' && (num >= 10 && num <= 18)) won += amt * 2;
+1771:                 else if (k === 'even' && (num > 0 && num % 2 === 0)) won += amt * 2;
+1772:                 else if (k === 'odd' && (num % 2 !== 0)) won += amt * 2;
+1773:                 else if (k === 'red' && ROULETTE_REDS.has(num)) won += amt * 2;
+1774:                 else if (k === 'black' && ROULETTE_BLACKS.has(num)) won += amt * 2;
+1775:             }
+1776:             return won;
+1777:         }
+1778: 
+1779:         function animateRouletteSpin(winNum, totalWon) {
+1780:             const startTime = performance.now();
+1781:             const duration = 5000;
+1782: 
+1783:             // Pocket index on wheel
+1784:             const pocketIndex = ROULETTE_ORDER.indexOf(winNum);
+1785:             const numPockets  = ROULETTE_ORDER.length;
+1786:             const sliceAngle  = (2 * Math.PI) / numPockets;
+1787: 
+1788:             // Where wheel ends up (4 full clockwise rotations from current)
+1789:             const initialWheelAngle = wheelAngle;
+1790:             const targetWheelAngle  = initialWheelAngle + 4 * (2 * Math.PI);
+1791: 
+1792:             // Exact world angle the ball must sit at when done
+1793:             const pocketCenter       = pocketIndex * sliceAngle + sliceAngle / 2;
+1794:             const finalBallWorldAngle = targetWheelAngle + pocketCenter;
+1795: 
+1796:             // Calculate how far the ball travels counter-clockwise so it
+1797:             // arrives EXACTLY at finalBallWorldAngle after ~9 full CCW rotations
+1798:             const initialBallAngle = ballAngle;
+1799:             let ccwDist = initialBallAngle - finalBallWorldAngle;
+1800:             // Normalise to [0, 2PI)
+1801:             ccwDist = ((ccwDist % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+1802:             // Add full CCW rotations (9 laps)
+1803:             ccwDist += 9 * (2 * Math.PI);
+1804:             const targetBallAngle = initialBallAngle - ccwDist; // always decreasing
+1805: 
+1806:             let lastSoundTime = 0;
+1807: 
+1808:             function step(now) {
+1809:                 const p = Math.min((now - startTime) / duration, 1.0);
+1810: 
+1811:                 // SINGLE smooth quintic ease-out — velocity is always decreasing, no restarts
+1812:                 // v(p) = 5*(1-p)^4  →  starts fast, ends at zero, no discontinuity
+1813:                 const ease = 1 - Math.pow(1 - p, 5);
+1814: 
+1815:                 wheelAngle = initialWheelAngle + (targetWheelAngle - initialWheelAngle) * ease;
+1816:                 ballAngle  = initialBallAngle  + (targetBallAngle  - initialBallAngle)  * ease;
+1817: 
+1818:                 // Ball drops from outer track into pocket in last 25% of animation
+1819:                 if (p < 0.75) {
+1820:                     ballRadiusProgress = 1.0;
+1821:                     if (now - lastSoundTime > 100) { playSound('ball_track'); lastSoundTime = now; }
+1822:                 } else if (p < 0.95) {
+1823:                     const t = (p - 0.75) / 0.20;
+1824:                     // smooth ease-in drop
+1825:                     ballRadiusProgress = 1.0 - 0.45 * (t * t);
+1826:                     if (now - lastSoundTime > 180) { playSound('ball_fret'); lastSoundTime = now; }
+1827:                 } else {
+1828:                     ballRadiusProgress = 0.55; // settled deep in pocket
+1829:                 }
+1830: 
+1831:                 drawFunRouletteWheel(wheelAngle, ballAngle, ballRadiusProgress);
+1832: 
+1833:                 if (p < 1.0) {
+1834:                     requestAnimationFrame(step);
+1835:                 } else {
+1836:                     ballAngle = finalBallWorldAngle; // guarantee exact landing
+1837:                     ballRadiusProgress = 0.55;
+1838:                     drawFunRouletteWheel(wheelAngle, ballAngle, ballRadiusProgress);
+1839:                     finalizeRouletteResult(winNum, totalWon);
+1840:                 }
+1841:             }
+1842: 
+1843:             requestAnimationFrame(step);
+1844:         }
+1845: 
+1846:         function finalizeRouletteResult(winNum, totalWon) {
+1847:             roulettePhase = 'SETTLED';
+1848: 
+1849:             // Update Winner Box
+1850:             const winnerBox = document.getElementById('rouletteWinnerText');
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

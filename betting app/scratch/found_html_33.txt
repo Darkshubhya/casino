@@ -1,0 +1,82 @@
+N CHAKRI -->
+421:         <!-- ============================================== -->
+422:         <div id="gameRouletteContainer" class="game-panel roulette-felt border-4 border-yellow-600/70 rounded-3xl p-3 sm:p-5 shadow-2xl space-y-4 relative overflow-hidden hidden">
+423:             
+424:             <!-- Top Ornate Header & Controls -->
+425:             <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
+426:                 <div class="flex items-center gap-2">
+427:                     <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold transition flex items-center gap-1 shadow active:scale-95">
+428:                         <span>← Lobby</span>
+429:                     </button>
+430:                     <span class="text-xs font-serif font-black text-amber-300 tracking-wider">Mini Roulette (Chakri 0-18)</span>
+431:                     <span id="roulettePhaseBadge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono font-bold flex items-center gap-1.5 shadow-sm">
+432:                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> BETTING OPEN (25s)
+433:                     </span>
+434:                 </div>
+435:                 <div class="flex items-center gap-2">
+436:                     <span class="text-[10px] text-amber-300/80 font-mono hidden sm:inline">⚡ Real-time Provably Fair</span>
+437:                     <button onclick="toggleAudioMute()" id="btnAudioMute" class="w-8 h-8 rounded-full bg-black/60 border border-amber-500/50 text-amber-300 flex items-center justify-center text-sm shadow hover:bg-black/90" title="Toggle Sound">
+438:                         🔊
+439:                     </button>
+440:                     <button onclick="toggleFeltFullscreen()" class="w-8 h-8 rounded-full bg-black/60 border border-amber-500/50 text-amber-300 flex items-center justify-center text-sm shadow hover:bg-black/90" title="Fullscreen">
+441:                         ⛶
+442:                     </button>
+443:                 </div>
+444:             </div>
+445: 
+446:             <!-- MAIN ROULETTE STAGE: Left Controls, Center Wheel, Right Winner/Controls -->
+447:             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+448:                 
+449:                 <!-- LEFT SIDE HUD: Score, Timer & Chip Selector -->
+450:                 <div class="lg:col-span-3 flex flex-col items-center sm:items-start gap-3 order-2 lg:order-1">
+451:                     <!-- Score Box -->
+452:                     <div class="w-full max-w-[220px]">
+453:                         <span class="text-xs font-serif font-black text-amber-200 tracking-widest block text-center mb-1">Score</span>
+454:                         <div class="gold-ornate-box py-1.5 px-3 rounded-xl text-center">
+455:                             <span id="rouletteScoreText" class="text-xl sm:text-2xl font-black font-mono text-white">1000</span>
+456:                         </div>
+457:                     </div>
+458: 
+459:                     <!-- Countdown Timer Box -->
+460:                     <div class="w-full max-w-[220px]">
+461:                         <span class="text-xs font-serif font-black text-amber-200 tracking-widest block text-center mb-1">Time Left</span>
+462:                         <div class="gold-ornate-box py-1 px-4 rounded-xl text-center">
+463:                             <span id="rouletteTimerText" class="text-lg sm:text-2xl font-black font-mono text-emerald-400 tracking-widest">0 : 25</span>
+464:                         </div>
+465:                     </div>
+466: 
+467:                     <!-- Authentic Chips Grid (1, 5, 10, 50, 100, 500, 1000, 5000) -->
+468:                     <div class="space-y-1.5 w-full max-w-[240px]">
+469:                         <span class="text-[10px] text-amber-300/80 font-mono uppercase tracking-wider block text-center sm:text-left">Select Chip:</span>
+470:                         
+471:                         <!-- Row 1: 1, 5, 10, 50 -->
+472:                         <div class="grid grid-cols-4 gap-2">
+473:                             <div onclick="selectRouletteChip(1)" id="chip_1" class="casino-chip active-chip w-11 h-11 bg-emerald-600 text-white text-xs border-2 border-emerald-300">
+474:                                 1
+475:                             </div>
+476:                             <div onclick="selectRouletteChip(5)" id="chip_5" class="casino-chip w-11 h-11 bg-blue-600 text-white text-xs border-2 border-blue-300">
+477:                                 5
+478:                             </div>
+479:                             <div onclick="selectRouletteChip(10)" id="chip_10" class="casino-chip w-11 h-11 bg-rose-600 text-white text-xs border-2 border-rose-300">
+480:                                 10
+481:                             </div>
+482:                             <div onclick="selectRouletteChip(50)" id="chip_50" class="casino-chip w-11 h-11 bg-amber-500 text-purple-950 text-xs border-2 border-yellow-200">
+483:                                 50
+484:                             </div>
+485:                         </div>
+486: 
+487:                         <!-- Row 2: 100, 500, 1000, 5000 -->
+488:                         <div class="grid grid-cols-4 gap-2">
+489:                             <div onclick="selectRouletteChip(100)" id="chip_100" class="casino-chip w-11 h-11 bg-cyan-600 text-white text-[11px] border-2 border-cyan-300">
+490:                                 100
+491:                             </div>
+492:                             <div onclick="selectRouletteChip(500)" id="chip_500" class="casino-chip w-11 h-11 bg-purple-700 text-white text-[11px] border-2 border-purple-300">
+493:                                 500
+494:                             </div>
+495:                             <div onclick="selectRouletteChip(1000)" id="chip_1000" class="casino-chip w-11 h-11 bg-orange-600 text-white text-[10px] border-2 border-orange-300">
+496:                                 1K
+497:                             </div>
+498:                             <div onclick="selectRouletteChip(5000)" id="chip_5000" class="casino-chip w-11 h-11 bg-slate-900 text-amber-300 text-[10px] border-2 border-amber-400">
+499:                                 5K
+500:                             </div>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

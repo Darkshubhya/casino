@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin Command Portal - Royal Casino</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        adminGold: '#FFD700',
+                        adminBg: '#080C18',
+                        adminCard: '#0F172A',
+                        adminBorder: '#1E293B',
+                        cyberGreen: '#10B981',
+                        cyberCyan: '#06B6D4'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080C18;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.08) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.06) 0px, transparent 45%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+        }
+
+        .gold-border-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), inset 0 0 15px rgba(245, 158, 11, 0.05);
+        }
+
+        .cyber-card-glow {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .gold-btn {
+            background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #D97706 100%);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+        }
+
+        .gold-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        @keyframes pulseSlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+
+        .pulse-slow {
+            animation: pulseSlow 3s ease-in-out infinite;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F59E0B;
+        }
+    </style>
+</head>
+
+<body class="text-slate-100 font-sans min-h-screen antialiased flex flex-col select-none">
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: DEDICATED ADMIN LOGIN GATEWAY (#adminLoginSection) -->
+    <!-- ======================================================== -->
+    <section id="adminLoginSection" class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative z-50">
+        <!-- Ambient background aura -->
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="w-full max-w-md bg-slate-900/95 border-2 border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden gold-border-glow backdrop-blur-2xl">
+            <!-- Decorative badge -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                <span class="text-[10px] font-mono tracking-widest uppercase font-extrabold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30">
+                    👑 MASTER OPERATOR GATE
+                </span>
+                <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 256-BIT SECURE
+                </span>
+            </div>
+
+            <!-- Crown Emblem & Title -->
+            <div class="text-center my-6 space-y-2">
+                <div class="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 font-black items-center justify-center text-3xl shadow-xl border-2 border-amber-300/50 pulse-slow">
+                    👑
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white tracking-wide">
+                    ADMIN COMMAND PORTAL
+                </h1>
+                <p class="text-xs text-slate-400">
+                    Royal Casino House Profit, Vault Balance & Master Controls
+                </p>
+            </div>
+
+            <!-- Error / Status Notice -->
+            <div id="adminLoginAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold border transition-all"></div>
+
+            <!-- Login Form -->
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="block text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+                        Admin Username / Operator ID
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">👤</span>
+                        <input id="adminLoginUser" type="text" value="admin" required placeholder="admin"
+                            class="w-full bg-slate-950/90 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono font-bold">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+                            Master Password
+                        </label>
+                        <span class="text-[10px] text-amber-400/80 font-mono">Default: admin123</span>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">🔑</span>
+                        <input id="adminLoginPass" type="password" value="admin123" required placeholder="admin123"
+                            class="w-full bg-slate-950/90 border border-slate-700 rounded-xl pl-10 pr-11 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono">
+                        <button type="button" onclick="toggleAdminPassVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1-Click Master Access Button -->
+                <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-amber-300 block">⚡ Quick Master Access</span>
+                        <span class="text-[10px] text-slate-400 font-mono">Auto-fill & verify root credentials</span>
+                    </div>
+                    <button type="button" onclick="fillAdminMasterCreds()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow active:scale-95">
+                        Fill Master
+                    </button>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="adminLoginBtn" class="w-full py-3.5 rounded-xl text-slate-950 font-black text-sm uppercase tracking-wider gold-btn transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <span>🔐 UNLOCK ADMIN DASHBOARD ➔</span>
+                </button>
+            </form>
+
+            <!-- Bottom Quick Links -->
+            <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
+                <a href="/login" class="text-slate-400 hover:text-amber-300 transition flex items-center gap-1 font-mono">
+                    <span>← Player Login</span>
+                </a>
+                <a href="/" class="text-amber-400 hover:text-amber-300 transition flex items-center gap-1 font-bold">
+                    <span>🎮 Play Casino Games →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: EXECUTIVE ADMIN DASHBOARD (#adminDashboardSection) -->
+    <!-- ======================================================== -->
+    <div id="adminDashboardSection" class="hidden flex-1 flex flex-col">
+
+        <!-- TOP EXECUTIVE HEADER BAR -->
+        <header class="bg-slate-900/95 border-b border-adminBorder px-4 sm:px-6 py-3.5 sticky top-0 z-40 backdrop-blur-md shadow-2xl">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                <!-- Branding & Status -->
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 font-black flex items-center justify-center text-2xl shadow-lg border border-amber-300/40">
+                        👑
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-base sm:text-lg font-black text-white tracking-wide">
+                                ROYAL CASINO ADMIN CONSOLE
+                            </h1>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-mono font-bold">
+                                #ADM-001 MASTER
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 flex items-center gap-2">
+                            <span>Master Operator ID: <b class="text-amber-300 font-mono">admin</b></span>
+                            <span class="text-slate-600">•</span>
+                            <span class="text-emerald-400 flex items-center gap-1 font-mono text-[11px] font-bold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE SYNCED
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Header Actions & Quick Vault Balance -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <!-- Quick Admin Vault Chip -->
+                    <div onclick="openVaultModal('deposit')" class="cursor-pointer bg-slate-950 border border-amber-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 hover:border-amber-400 transition shadow-inner" title="Click to Add/Withdraw House Capital">
+                        <span class="text-base">👑</span>
+                        <div>
+                            <span class="text-[9px] uppercase font-mono text-slate-400 block leading-tight">Admin Vault</span>
+                            <span id="headerVaultBalance" class="text-xs sm:text-sm font-black font-mono text-amber-300">$25,000.00</span>
+                        </div>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">Manage</span>
+                    </div>
+
+                    <!-- Return to Casino Games -->
+                    <a href="/" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl text-xs border border-slate-700 transition flex items-center gap-1.5 active:scale-95">
+                        <span>🎮 Casino Lobby</span>
+                    </a>
+
+                    <!-- Refresh Button -->
+                    <button onclick="loadAdminData(true)" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs border border-slate-700 transition" title="Refresh Dashboard Now">
+                        🔄
+                    </button>
+
+                    <!-- Lock / Logout Console -->
+                    <button onclick="logoutAdmin()" class="px-3 py-2 bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-600/50 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95" title="Lock Console & Log Out">
+                        <span>🔒 Lock & Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ======================================================== -->
+        <!-- TOP STICKY TAB NAVIGATION BAR (NO ENDLESS SCROLLING!)    -->
+        <!-- ======================================================== -->
+        <nav class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-adminBorder shadow-2xl px-4 sm:px-6 py-2.5">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 flex-wrap">
+                <!-- Navigation Tabs Group -->
+                <div class="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none" id="adminNavTabsContainer">
+                    <!-- Tab 1: Overview -->
+                    <button type="button" onclick="switchAdminTab('overview')" id="navTabBtn-overview" 
+                        class="admin-tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-amber-300 border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)] font-black">
+                        <span>📊</span>
+                        <span>Dashboard Overview</span>
+                    </button>
+
+                    <!-- Tab 2: 4-Partner Share & Safety Vault -->
+                    <button type="button" onclick="switchAdminTab('partners')" id="navTabBtn-partners" 
+                        class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700">
+                        <span>👑</span>
+                        <span>4-Partner Share & Vault (20% x 5)</span>
+                        <span class="text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded-full font-bold">★ 20% x 5</span>
+                    </button>
+
+                    <!-- Tab 3: Withdrawal Requests -->
+                    <button type="button" onclick="switchAdminTab('withdrawals')" id="navTabBtn-withdrawals" 
+                        class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700">
+                        <span>💸</span>
+                        <span>Withdrawal Requests</span>
+                        <span id="navPendingWithdrawalsBadge" class="text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded-full">
+                            0 Pending
+                        </span>
+                    </button>
+
+                    <!-- Tab 4: Player Accounts -->
+                    <button type="button" onclick="switchAdminTab('players')" id="navTabBtn-players" 
+                        class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700">
+                        <span>👥</span>
+                        <span>Player Accounts</span>
+                    </button>
+
+                    <!-- Tab 5: Live Bets Stream -->
+                    <button type="button" onclick="switchAdminTab('livebets')" id="navTabBtn-livebets" 
+                        class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700">
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                        <span>Live Bets Stream</span>
+                    </button>
+
+                    <!-- Tab 6: View All Sections -->
+                    <button type="button" onclick="switchAdminTab('all')" id="navTabBtn-all" 
+                        class="admin-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800/80" title="Show All Sections Together (Full View)">
+                        <span>📑</span>
+                        <span>View All</span>
+                    </button>
+                </div>
+
+                <!-- Right Quick Stats summary in Tab Bar -->
+                <div class="hidden xl:flex items-center gap-3 text-xs font-mono">
+                    <span class="text-slate-400">Hamara Balance: <b id="tabBarAdminBalance" class="text-amber-300 font-bold">$75,000.00</b></span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-slate-400">Safety Vault: <b id="tabBarSafetyVaultBalance" class="text-emerald-400 font-bold">₹75,000.00</b></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN DASHBOARD CONTENT -->
+        <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+            <!-- ======================================================== -->
+            <!-- TAB 1: OVERVIEW (HERO METRICS + GAME PROFIT MATRIX)      -->
+            <!-- ======================================================== -->
+            <div id="tabSection-overview" class="space-y-6">
+
+            <!-- ======================================================== -->
+            <!-- SECTION 1: HERO FINANCIAL COMMAND CARDS (MUNAFA & BALANCE) -->
+            <!-- ======================================================== -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- 1. HAMARA ADMIN ACCOUNT BALANCE (MASTER VAULT) -->
+                <div class="bg-gradient-to-br from-slate-900 to-amber-950/30 border-2 border-amber-500/40 p-5 rounded-3xl shadow-xl relative overflow-hidden cyber-card-glow flex flex-col justify-between">
+                    <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 pointer-events-none">👑</div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                                <span>👑</span> Hamara Admin Balance
+                            </span>
+                            <span class="text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full">
+                                Master Vault
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Hamare master account me abhi kitna balance hai</p>
+
+                        <div class="my-3">
+                            <span id="statAdminBalance" class="text-3xl sm:text-4xl font-black font-mono text-amber-300 tracking-tight block">
+                                $25,000.00
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Direct Deposit/Withdraw Buttons -->
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                        <button onclick="openVaultModal('deposit')" class="py-2 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/50 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95">
+                            <span>➕ Add Capital</span>
+                        </button>
+                        <button onclick="openVaultModal('withdraw')" class="py-2 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 border border-rose-500/50 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95">
+                            <span>➖ Withdraw</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. HAMARA SHUDDH PROFIT (NET HOUSE PROFIT / GGR) -->
+                <div class="bg-gradient-to-br from-slate-900 to-emerald-950/40 border-2 border-emerald-500/40 p-5 rounded-3xl shadow-xl relative overflow-hidden cyber-card-glow flex flex-col justify-between">
+                    <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 pointer-events-none">💰</div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                                <span>📈</span> Hamara Kul Profit
+                            </span>
+                            <span id="statHouseMargin" class="text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full">
+                                +0.0% Hold
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Total Bets Wagered Minus Total Payouts Won</p>
+
+                        <div class="my-3">
+                            <span id="statNetHouseProfit" class="text-3xl sm:text-4xl font-black font-mono text-emerald-400 tracking-tight block">
+                                +$0.00
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-300 flex items-center justify-between font-mono">
+                        <span>Platform GGR Munafa</span>
+                        <span class="text-emerald-400 font-bold">● Positive Cashflow</span>
+                    </div>
+                </div>
+
+                <!-- 3. KUL PLAYER BETS VS WINNINGS -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl shadow-xl flex flex-col justify-between cyber-card-glow">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+                                🪙 Bets vs Payouts
+                            </span>
+                            <span class="text-[10px] font-mono font-bold text-slate-500">
+                                All 56+ Games
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Players ne kitna lagaya vs kitna jeeta</p>
+
+                        <div class="space-y-2 mt-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400">Total Wagered (Lagaye):</span>
+                                <span id="statTotalBets" class="text-sm font-mono font-black text-amber-400">$0.00</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400">Total Won (Jeete):</span>
+                                <span id="statTotalWon" class="text-sm font-mono font-black text-cyan-400">$0.00</span>
+                            </div>
+                            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden flex border border-slate-800">
+                                <div id="barProfitRatio" class="bg-emerald-500 h-full transition-all" style="width: 60%"></div>
+                                <div id="barPayoutRatio" class="bg-cyan-500 h-full transition-all" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>Total Rounds Played:</span>
+                        <span id="statTotalGames" class="font-mono font-bold text-white">0</span>
+                    </div>
+                </div>
+
+                <!-- 4. KHILADIYO KE WALLET KA BALANCE (LIABILITY / FLOAT) -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl shadow-xl flex flex-col justify-between cyber-card-glow">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-mono font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
+                                <span>👥</span> Player Balances Float
+                            </span>
+                            <span id="statPlayerCountBadge" class="text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full">
+                                0 Players
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Khiladiyo ke accounts me pada hua kul balance</p>
+
+                        <div class="my-3">
+                            <span id="statPlayerBalancesTotal" class="text-2xl sm:text-3xl font-black font-mono text-purple-300 tracking-tight block">
+                                $0.00
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>House Solvency Cover:</span>
+                        <span id="statSolvencyRatio" class="font-mono font-bold text-emerald-400">> 500% Safe</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SECTION 2: GAME-WISE PROFIT & PERFORMANCE BREAKDOWN -->
+            <!-- ======================================================== -->
+            <div class="bg-slate-900 border border-adminBorder rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-adminBorder pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">🎮</span>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-black text-white">Game-Wise House Profit & Volume Matrix</h2>
+                            <p class="text-xs text-slate-400">Konsa game hamare casino me sabse zyada profit generate kar raha hai</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        ⚡ Real-Time Algorithmic Accounting
+                    </span>
+                </div>
+
+                <!-- 5 Popular Game Profit Cards Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3" id="gameCardsGrid">
+                    <!-- Cards will be populated by JS -->
+                </div>
+            </div>
+            </div> <!-- /tabSection-overview -->
+
+            <!-- ======================================================== -->
+            <!-- TAB: PLAYER WITHDRAWAL REQUESTS & PAYOUT APPROVALS       -->
+            <!-- ======================================================== -->
+            <div id="tabSection-withdrawals" class="space-y-6 hidden">
+            <div class="bg-slate-900 border-2 border-emerald-500/40 rounded-3xl p-5 shadow-2xl space-y-4 relative overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-adminBorder pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">💸</span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-base sm:text-lg font-black text-white">Player Withdrawal Requests (निकासी अनुरोध)</h2>
+                                <span id="adminPendingWithdrawCountBadge" class="text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full animate-pulse">
+                                    0 Pending
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400">
+                                Jab aap <b class="text-emerald-400">"Accept & Deduct"</b> karenge, tab samne wale player ke account se paise katenge!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right Controls / Metrics -->
+                    <div class="flex items-center gap-2">
+                        <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
+                            <span class="text-slate-400 block text-[9px] uppercase">Approved Total</span>
+                            <span id="statApprovedWithdrawalsTotal" class="text-emerald-400 font-bold">$0.00</span>
+                        </div>
+                        <button onclick="loadWithdrawals(true)" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs border border-slate-700 transition" title="Refresh Withdrawals">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Withdrawals Table -->
+                <div class="overflow-x-auto rounded-2xl border border-adminBorder bg-slate-950/80">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 font-mono uppercase text-[10px] border-b border-adminBorder">
+                            <tr>
+                                <th class="py-3.5 px-4">Request ID</th>
+                                <th class="py-3.5 px-4">Player</th>
+                                <th class="py-3.5 px-4">Player Balance</th>
+                                <th class="py-3.5 px-4">Withdraw Amount</th>
+                                <th class="py-3.5 px-4">Payment Method & Info</th>
+                                <th class="py-3.5 px-4">Request Time</th>
+                                <th class="py-3.5 px-4">Status</th>
+                                <th class="py-3.5 px-4 text-right">Admin Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminWithdrawalsTableBody" class="divide-y divide-adminBorder/60 font-sans">
+                            <tr>
+                                <td colspan="8" class="text-center py-6 text-slate-500 font-mono text-xs">
+                                    Loading withdrawal requests...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div> <!-- /tabSection-withdrawals -->
+
+            <!-- ======================================================== -->
+            <!-- TAB: PLAYER MANAGEMENT & UNIQUE ID SYSTEM                -->
+            <!-- ======================================================== -->
+            <div id="tabSection-players" class="space-y-6 hidden">
+            <div class="bg-slate-900 border border-adminBorder rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-adminBorder pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">👥</span>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-black text-white">Player Accounts & Wallet Management</h2>
+                            <p class="text-xs text-slate-400">Auto Unique ID generation, 1-Click Balance Adjustments, Password Reset, and Access Control</p>
+                        </div>
+                    </div>
+
+                    <!-- Search & Create User Button -->
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="playerSearchInput" oninput="filterPlayersTable()" placeholder="🔍 Search username or UID..." class="bg-slate-950 border border-adminBorder rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 w-44 sm:w-60">
+                        <button onclick="openCreateUserModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center gap-1.5 active:scale-95 whitespace-nowrap">
+                            <span>➕ Create New User Account</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="overflow-x-auto rounded-2xl border border-adminBorder bg-slate-950/80">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 font-mono uppercase text-[10px] border-b border-adminBorder">
+                            <tr>
+                                <th class="py-3.5 px-4">Unique ID</th>
+                                <th class="py-3.5 px-4">Username</th>
+                                <th class="py-3.5 px-4">Role</th>
+                                <th class="py-3.5 px-4">Wallet Balance</th>
+                                <th class="py-3.5 px-4">Total Bets</th>
+                                <th class="py-3.5 px-4">Total Won</th>
+                                <th class="py-3.5 px-4">Player Net P/L</th>
+                                <th class="py-3.5 px-4">Status</th>
+                                <th class="py-3.5 px-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="divide-y divide-adminBorder/60 font-sans">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div> <!-- /tabSection-players -->
+
+            <!-- ======================================================== -->
+            <!-- TAB: 4-PARTNER PROFIT SHARE & EMERGENCY SAFETY VAULT     -->
+            <!-- ======================================================== -->
+            <div id="tabSection-partners" class="space-y-6 hidden">
+            <div class="bg-gradient-to-b from-slate-900 via-slate-900 to-purple-950/30 border-2 border-amber-500/50 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-5 relative overflow-hidden">
+                <!-- Top Section Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-adminBorder pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl p-2.5 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-purple-500/20 border border-amber-500/40 text-amber-300">👑</span>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h2 class="text-lg sm:text-xl font-black text-white">4-Partner Profit Share & Emergency Safety Vault</h2>
+                                <span class="text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-0.5 rounded-full uppercase">
+                                    ★ 20-20-20-20-20 Model
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">
+                                चारों पार्टनर्स का 20% हिस्सा + 20% गेम सेफ़्टी वॉल्ट (बड़ी जीत/जैकपॉट भुगतान के लिए अनिवार्य रिज़र्व फंड)
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right Quick Settle Button -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="openSettleProfitModal()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:brightness-110 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-[0_0_20px_rgba(245,158,11,0.4)] flex items-center gap-1.5 cursor-pointer">
+                            <span>⚡ 1-Click Split & Settle (20% x 5 हिसाब करें)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TOP HIGHLIGHT: 20% COMPULSORY EMERGENCY SAFETY VAULT CARD -->
+                <div class="bg-gradient-to-r from-emerald-950/70 via-slate-950 to-emerald-950/70 border-2 border-emerald-500/50 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 flex items-center justify-center text-2xl shrink-0 shadow">
+                            🛡️
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm sm:text-base font-black text-emerald-300 font-mono tracking-wide uppercase">
+                                    Game Emergency Safety Vault (20% अनिवार्य फंड)
+                                </h3>
+                                <span class="text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-full">
+                                    LOCKED HOUSE BACKUP
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed max-w-2xl">
+                                <b>सुरक्षा नियम:</b> कुल मुनाफे का 20% हमेशा इस वॉल्ट में जमा रहेगा। अगर कोई खिलाड़ी अचानक ₹50,000 या ₹1,00,000 का <b>बड़ा दांव (Big Bet Jackpot) जीत जाता है</b>, तो उसका भुगतान इसी फंड से होगा — किसी पार्टनर को अपनी जेब से पैसे नहीं देने पड़ेंगे!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-2 shrink-0">
+                        <div class="text-right bg-slate-900/90 border border-emerald-500/40 p-3 rounded-2xl shadow-inner min-w-[190px]">
+                            <span class="text-[10px] font-mono text-slate-400 uppercase block">Active Safety Reserve</span>
+                            <span id="vaultSafetyBalanceDisplay" class="text-xl sm:text-2xl font-black font-mono text-emerald-400 tracking-tight block">₹75,000.00</span>
+                            <span id="vaultAccumulatedTotalDisplay" class="text-[10px] font-mono text-slate-400 block mt-0.5">Total Accumulated: ₹125,000.00</span>
+                        </div>
+                        <button onclick="openPayoutWinnerVaultModal()" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:brightness-110 active:scale-95 text-white font-mono font-bold text-[11px] shadow border border-emerald-400/50 flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span>🛡️ Pay Winner from Vault</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 PARTNERS PAYOUT CARDS (20% EACH) -->
+                <div>
+                    <div class="flex items-center justify-between mb-3 text-xs font-mono">
+                        <span class="text-slate-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                            <span>👥</span> 4 Co-Owners Payout Breakdown (20% Each):
+                        </span>
+                        <span class="text-amber-300">Live Pool: <b id="partnerPoolPerShareText">₹0.00 each</b></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="partnerCardsContainer">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- RECENT SETTLEMENTS AUDIT HISTORY TABLE -->
+                <div class="space-y-2 pt-2 border-t border-slate-800">
+                    <div class="flex items-center justify-between text-xs font-mono">
+                        <span class="text-slate-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                            <span>📜</span> Immutable Settlement Ledger (डिजिटल रसीद & हिसाब हिस्ट्री):
+                        </span>
+                        <span class="text-slate-500">Auto-recorded on every settlement</span>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-2xl border border-adminBorder bg-slate-950/80">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 font-mono uppercase text-[10px] border-b border-adminBorder">
+                                <tr>
+                                    <th class="py-3 px-3.5">Settlement ID</th>
+                                    <th class="py-3 px-3.5">Date & Time</th>
+                                    <th class="py-3 px-3.5">Net Profit Split</th>
+                                    <th class="py-3 px-3.5 text-emerald-400">🛡️ Vault (20%)</th>
+                                    <th class="py-3 px-3.5 text-amber-300">Partner 1 (20%)</th>
+                                    <th class="py-3 px-3.5 text-amber-300">Partner 2 (20%)</th>
+                                    <th class="py-3 px-3.5 text-amber-300">Partner 3 (20%)</th>
+                                    <th class="py-3 px-3.5 text-amber-300">Partner 4 (20%)</th>
+                                    <th class="py-3 px-3.5 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="settlementHistoryTableBody" class="divide-y divide-adminBorder/60 font-sans">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- /tabSection-partners -->
+
+            <!-- ======================================================== -->
+            <!-- TAB: REAL-TIME LIVE BET MONITOR STREAM                   -->
+            <!-- ======================================================== -->
+            <div id="tabSection-livebets" class="space-y-6 hidden">
+            <div class="bg-slate-900 border border-adminBorder rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-adminBorder pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400">🔴</span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-base sm:text-lg font-black text-white">Live Platform Bets & Winnings Stream</h2>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono font-bold flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> AUTO-REFRESH (3s)
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400">Live monitoring: Kon kitna jeeta, kisne kitne paise lagaye across all 56+ games</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadLiveBets()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-mono font-bold border border-slate-700 transition flex items-center gap-1">
+                            <span>🔄 Refresh Feed</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-2xl border border-adminBorder bg-slate-950/80 shadow-inner">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 font-mono uppercase text-[10px] border-b border-adminBorder">
+                            <tr>
+                                <th class="py-3 px-4">Time</th>
+                                <th class="py-3 px-4">Player & Unique ID</th>
+                                <th class="py-3 px-4">Game</th>
+                                <th class="py-3 px-4">Stake (Paise Lagaye)</th>
+                                <th class="py-3 px-4">Outcome / Multiplier</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4 text-right">Payout (Jeeta / Won)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liveBetsTableBody" class="divide-y divide-adminBorder/60 font-sans">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div> <!-- /tabSection-livebets -->
+
+        </main>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 1: ADMIN MASTER VAULT CAPITAL MANAGEMENT -->
+    <!-- ======================================================== -->
+    <div id="vaultModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-amber-500/40 max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">👑</span>
+                    <div>
+                        <h3 class="text-lg font-black text-white">Admin Master Vault Capital</h3>
+                        <p class="text-[11px] text-slate-400">Deposit or withdraw house operational capital</p>
+                    </div>
+                </div>
+                <button onclick="closeVaultModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <!-- Current Balance Display -->
+            <div class="p-3.5 bg-slate-950 rounded-2xl border border-adminBorder flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] uppercase font-mono text-slate-400 block">Current Vault Balance</span>
+                    <span id="vaultModalCurrentBal" class="text-xl font-mono font-black text-amber-300">$25,000.00</span>
+                </div>
+                <span class="text-xs font-mono text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-500/40 px-2.5 py-1 rounded-lg">● Master Ready</span>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Transaction Action:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="vaultActionDepositBtn" onclick="setVaultAction('deposit')" class="py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs transition border border-emerald-400">
+                            ➕ Deposit / Add Capital
+                        </button>
+                        <button type="button" id="vaultActionWithdrawBtn" onclick="setVaultAction('withdraw')" class="py-2.5 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs transition border border-slate-700">
+                            ➖ Withdraw Capital
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Amount ($):</label>
+                    <input id="vaultAmountInput" type="number" min="1" value="5000" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-sm text-amber-300 font-mono font-black focus:outline-none focus:border-amber-400">
+                </div>
+
+                <!-- Quick Amount Chips -->
+                <div class="grid grid-cols-4 gap-1.5 pt-1">
+                    <button onclick="setQuickVaultAmt(1000)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$1,000</button>
+                    <button onclick="setQuickVaultAmt(5000)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$5,000</button>
+                    <button onclick="setQuickVaultAmt(10000)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$10,000</button>
+                    <button onclick="setQuickVaultAmt(50000)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$50,000</button>
+                </div>
+            </div>
+
+            <button onclick="submitVaultTransaction()" id="vaultSubmitBtn" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black rounded-xl text-sm transition shadow-lg active:scale-95">
+                Confirm Vault Deposit (+$5,000.00)
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 2: CREATE NEW USER ACCOUNT -->
+    <!-- ======================================================== -->
+    <div id="createUserModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-adminBorder max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">👤</span>
+                    <h3 class="text-lg font-bold text-white">Create New User Account</h3>
+                </div>
+                <button onclick="closeCreateUserModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Username (ID):</label>
+                    <input id="newUsername" type="text" placeholder="e.g. rohit_77" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400 font-mono">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Password:</label>
+                    <input id="newPassword" type="text" placeholder="e.g. securePass123" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400 font-mono">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Starting Wallet Balance ($):</label>
+                    <input id="newBalance" type="number" min="0" value="1000" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-emerald-400 font-mono font-bold focus:outline-none focus:border-emerald-400">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Account Role:</label>
+                    <select id="newRole" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                        <option value="user" selected>Standard Player</option>
+                        <option value="admin">Administrator (Master Access)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="submitCreateUser()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm transition shadow-lg active:scale-95">
+                Confirm & Create Account
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 3: MODIFY PLAYER FUNDS -->
+    <!-- ======================================================== -->
+    <div id="modifyFundsModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-adminBorder max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">💰</span>
+                    <h3 class="text-lg font-bold text-white">Modify Player Balance</h3>
+                </div>
+                <button onclick="closeModifyFundsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-400 block mb-1">Target Player:</label>
+                    <input id="targetPlayerUsername" type="text" readonly class="w-full bg-slate-950/60 border border-adminBorder rounded-xl p-3 text-xs text-amber-300 font-bold font-mono">
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Action:</label>
+                    <select id="fundAction" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                        <option value="add" selected>➕ Add Funds to Account</option>
+                        <option value="subtract">➖ Deduct Funds from Account</option>
+                        <option value="set">⚡ Set Exact Balance</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Amount ($):</label>
+                    <input id="fundAmount" type="number" min="1" value="500" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-emerald-400 font-mono font-bold focus:outline-none focus:border-emerald-400">
+                </div>
+                <div class="grid grid-cols-4 gap-1.5 pt-1">
+                    <button onclick="setQuickFund(100)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$100</button>
+                    <button onclick="setQuickFund(500)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$500</button>
+                    <button onclick="setQuickFund(1000)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$1K</button>
+                    <button onclick="setQuickFund(5000)" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-bold">+$5K</button>
+                </div>
+            </div>
+
+            <button onclick="submitModifyFunds()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black rounded-xl text-sm transition shadow-lg active:scale-95">
+                Update Player Wallet
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 4: RESET PASSWORD -->
+    <!-- ======================================================== -->
+    <div id="changePasswordModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-adminBorder max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🔑</span>
+                    <h3 class="text-lg font-bold text-white">Reset User Password</h3>
+                </div>
+                <button onclick="closeChangePasswordModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-400 block mb-1">Player Username:</label>
+                    <input id="pwdPlayerUsername" type="text" readonly class="w-full bg-slate-950/60 border border-adminBorder rounded-xl p-3 text-xs text-amber-300 font-bold font-mono">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">New Password:</label>
+                    <input id="newPasswordInput" type="text" placeholder="Enter new password" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400 font-mono">
+                </div>
+            </div>
+
+            <button onclick="submitChangePassword()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-sm transition shadow-lg active:scale-95">
+                Save New Password
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: REJECT WITHDRAWAL -->
+    <!-- ======================================================== -->
+    <div id="rejectWithdrawModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-adminBorder max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">❌</span>
+                    <h3 class="text-lg font-bold text-white">Reject Withdrawal Request</h3>
+                </div>
+                <button onclick="closeRejectWithdrawModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <input type="hidden" id="rejectRequestIdInput">
+                <div>
+                    <label class="text-slate-400 block mb-1">Request & Player:</label>
+                    <div id="rejectRequestSummaryText" class="p-3 rounded-xl bg-slate-950 font-mono font-bold text-slate-200 border border-adminBorder">
+                        #WDR-0000 • $0.00
+                    </div>
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-semibold">Reason for Rejection (कारण):</label>
+                    <input id="rejectReasonInput" type="text" value="Invalid UPI ID / Payment details mismatch" placeholder="e.g. Invalid UPI ID" class="w-full bg-slate-950 border border-adminBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-rose-400">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="closeRejectWithdrawModal()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">
+                    Cancel
+                </button>
+                <button onclick="confirmRejectWithdrawal()" class="py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs transition shadow-lg active:scale-95">
+                    Confirm Reject
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: 1-CLICK PROFIT SPLIT & 20% x 5 SETTLEMENT MODAL    -->
+    <!-- ======================================================== -->
+    <div id="settleProfitModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 select-none">
+        <div class="bg-gradient-to-b from-slate-900 via-slate-900 to-purple-950/40 border-2 border-amber-500/70 max-w-xl w-full rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-3xl">⚡</span>
+                    <div>
+                        <h3 class="text-lg font-black text-white">1-Click Profit Split & Safety Vault (20% x 5)</h3>
+                        <p class="text-xs text-amber-300/90 font-mono">20% Game Reserve Fund + 20% x 4 Partners</p>
+                    </div>
+                </div>
+                <button onclick="closeSettleProfitModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <!-- Settlement Amount Input -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-adminBorder space-y-2">
+                <label class="block text-xs font-mono font-bold text-slate-300 uppercase">
+                    Total Net Profit Amount to Split & Distribute (₹):
+                </label>
+                <div class="relative">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-base text-amber-400 font-mono font-bold">₹</span>
+                    <input id="settleCustomAmountInput" type="number" min="100" step="100" oninput="recalculateSettleBreakdown(this.value)"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-base font-black font-mono text-emerald-400 focus:outline-none focus:border-amber-400">
+                </div>
+                <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
+                    <span>Live Net House Profit: <b id="settleLiveProfitHint" class="text-amber-300">₹0.00</b></span>
+                    <button type="button" onclick="useLiveProfitAmount()" class="text-amber-400 hover:underline">Use Live Profit</button>
+                </div>
+            </div>
+
+            <!-- 5-Way Split Preview Cards -->
+            <div class="space-y-2">
+                <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block">
+                    Breakdown Preview (20% Each):
+                </span>
+                
+                <!-- 1. Safety Vault (20%) -->
+                <div class="p-3 bg-emerald-950/60 border-2 border-emerald-500/50 rounded-2xl flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl">🛡️</span>
+                        <div>
+                            <span class="text-xs font-black text-emerald-300 block">Game Emergency Safety Vault (20%)</span>
+                            <span class="text-[10px] text-slate-400 font-mono">Locked in platform for big jackpot player wins</span>
+                        </div>
+                    </div>
+                    <span id="previewVaultShare" class="text-base font-black font-mono text-emerald-400">₹0.00</span>
+                </div>
+
+                <!-- 2. Partners 1 to 4 (20% Each) -->
+                <div class="grid grid-cols-2 gap-2" id="settlePartnersPreviewGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeSettleProfitModal()" class="py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmExecuteSettlement()" id="btnConfirmExecuteSettlement"
+                    class="py-3 bg-gradient-to-r from-amber-500 to-yellow-400 hover:brightness-110 active:scale-95 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span>CONFIRM & DISTRIBUTE ➔</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- MODAL: EDIT PARTNER UPI & CONTACT DETAILS                 -->
+    <!-- ======================================================== -->
+    <div id="editPartnerModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 select-none">
+        <div class="bg-slate-900 border-2 border-amber-500/60 max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">✏️</span>
+                    <div>
+                        <h3 class="text-base font-black text-white">Edit Partner Details</h3>
+                        <p class="text-[11px] text-slate-400 font-mono">Update UPI ID, phone or role title</p>
+                    </div>
+                </div>
+                <button onclick="closeEditPartnerModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <input type="hidden" id="editPartnerIdInput">
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-300 block mb-1 font-bold">Partner Display Name:</label>
+                    <input id="editPartnerNameInput" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-bold focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-bold">Assigned Duty / Role:</label>
+                    <input id="editPartnerRoleInput" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-bold">UPI ID (e.g. partner@oksbi, phone@paytm):</label>
+                    <input id="editPartnerUpiInput" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-amber-300 font-mono font-bold focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-bold">Mobile Number:</label>
+                    <input id="editPartnerPhoneInput" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-mono focus:outline-none focus:border-amber-400">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeEditPartnerModal()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">
+                    Cancel
+                </button>
+                <button type="button" onclick="savePartnerDetails()" class="py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow active:scale-95">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: PAY BIG WINNER FROM EMERGENCY SAFETY VAULT         -->
+    <!-- ======================================================== -->
+    <div id="payoutWinnerVaultModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 select-none">
+        <div class="bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950/40 border-2 border-emerald-500/70 max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-adminBorder pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🛡️</span>
+                    <div>
+                        <h3 class="text-base font-black text-white">Pay Big Winner From Safety Vault</h3>
+                        <p class="text-[11px] text-emerald-300 font-mono">इमरजेंसी सेफ़्टी वॉल्ट से जैकपॉट खिलाड़ी को भुगतान</p>
+                    </div>
+                </div>
+                <button onclick="closePayoutWinnerVaultModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700">✕</button>
+            </div>
+
+            <!-- Vault Current Balance Info -->
+            <div class="p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-2xl flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-300">Available In Safety Vault:</span>
+                <span id="vaultPayoutModalAvailableBal" class="text-emerald-400 font-black text-sm">₹75,000.00</span>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-300 block mb-1 font-bold">Winner Player Username (खिलाड़ी का ID):</label>
+                    <input id="vaultPayoutPlayerUsername" type="text" placeholder="e.g. player1, rahul_k" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-mono font-bold focus:outline-none focus:border-emerald-400">
+                </div>
+                <div>
+                    <label class="text-slate-300 block mb-1 font-bold">Winning Jackpot Amount to Pay (₹):</label>
+                    <input id="vaultPayoutAmount" type="number" min="100" step="500" value="10000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-emerald-400 font-mono font-black text-sm focus:outline-none focus:border-emerald-400">
+                </div>
+                <p class="text-[11px] text-slate-300 bg-slate-950/80 p-2.5 rounded-xl border border-emerald-500/30 leading-relaxed">
+                    💡 <b>सेफ़्टी गारंटी:</b> यह राशि सीधे <b>20% Emergency Safety Vault</b> से कटेगी और खिलाड़ी के वॉलेट में तुरंत जुड़ जाएगी। किसी भी पार्टनर को अपनी जेब से ₹1 भी नहीं देना पड़ेगा!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                <button type="button" onclick="closePayoutWinnerVaultModal()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">
+                    Cancel
+                </button>
+                <button type="button" onclick="submitPayoutWinnerFromVault()" id="btnSubmitVaultPayout" class="py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 active:scale-95 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-1">
+                    <span>CONFIRM PAYOUT ➔</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- GENERAL NOTICE MODAL -->
+    <div id="adminNoticeModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-adminBorder max-w-sm w-full rounded-3xl p-6 shadow-2xl text-center space-y-3">
+            <div id="noticeIcon" class="text-3xl">✅</div>
+            <h3 id="noticeHeading" class="text-base font-bold text-white">Notice</h3>
+            <p id="noticeBody" class="text-xs text-slate-300 leading-relaxed">Message</p>
+            <button onclick="closeAdminNotice()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition">
+                OK
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- JAVASCRIPT LOGIC -->
+    <!-- ======================================================== -->
+    <script>
+        const API_BASE = window.location.origin.includes('5000') ? '' : 'http://localhost:5000';
+        let currentVaultAction = 'deposit';
+        let livePollingInterval = null;
+
+        // Retrieve token
+        function getStoredAdminToken() {
+            return localStorage.getItem('royal_admin_token') || localStorage.getItem('royal_token') || 'admin-master-token';
+        }
+
+        // Generic authenticated fetch helper
+        async function adminApi(endpoint, method = 'GET', body = null) {
+            const token = getStoredAdminToken();
+            try {
+                const headers = { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'X-User-Token': 'admin'
+                };
+                const options = { method, headers };
+                if (body) options.body = JSON.stringify(body);
+
+                const res = await fetch(`${API_BASE}${endpoint}`, options);
+                if (res.status === 401 || res.status === 403) {
+                    // Check if unauthenticated
+                    if (endpoint.includes('/admin/stats')) {
+                        showLoginGate();
+                    }
+                }
+                if (res.ok) return await res.json();
+            } catch (e) {
+                console.warn('API error:', e);
+            }
+            return null;
+        }
+
+        // Toggle Password visibility in Login Form
+        function toggleAdminPassVisibility() {
+            const passInput = document.getElementById('adminLoginPass');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+            } else {
+                passInput.type = 'password';
+            }
+        }
+
+        // 1-Click Master Credential autofill
+        function fillAdminMasterCreds() {
+            document.getElementById('adminLoginUser').value = 'admin';
+            document.getElementById('adminLoginPass').value = 'admin123';
+            showAdminAlert('Master credentials filled (admin / admin123). Click Unlock button below.', 'success');
+        }
+
+        function showAdminAlert(msg, type = 'error') {
+            const alertBox = document.getElementById('adminLoginAlert');
+            alertBox.classList.remove('hidden', 'bg-rose-950/80', 'text-rose-300', 'border-rose-500/50', 'bg-emerald-950/80', 'text-emerald-300', 'border-emerald-500/50');
+            if (type === 'error') {
+                alertBox.classList.add('bg-rose-950/80', 'text-rose-300', 'border-rose-500/50');
+                alertBox.innerHTML = `⚠️ <b>Error:</b> ${msg}`;
+            } else {
+                alertBox.classList.add('bg-emerald-950/80', 'text-emerald-300', 'border-emerald-500/50');
+                alertBox.innerHTML = `🎉 <b>Verified:</b> ${msg}`;
+            }
+        }
+
+        // Show / Hide Views
+        function showLoginGate() {
+            document.getElementById('adminLoginSection').classList.remove('hidden');
+            document.getElementById('adminDashboardSection').classList.add('hidden');
+            if (livePollingInterval) clearInterval(livePollingInterval);
+        }
+
+        function showDashboard() {
+            document.getElementById('adminLoginSection').classList.add('hidden');
+            document.getElementById('adminDashboardSection').classList.remove('hidden');
+            loadAdminData();
+            const savedTab = localStorage.getItem('royal_admin_active_tab') || 'overview';
+            switchAdminTab(savedTab);
+            if (!livePollingInterval) {
+                livePollingInterval = setInterval(() => {
+                    loadLiveBets();
+                    loadWithdrawals();
+                }, 3000);
+            }
+        }
+
+        // ==========================================
+        // TAB NAVIGATION CONTROLLER (NO ENDLESS SCROLLING)
+        // ==========================================
+        function switchAdminTab(tabName) {
+            localStorage.setItem('royal_admin_active_tab', tabName);
+            const allTabs = ['overview', 'partners', 'withdrawals', 'players', 'livebets'];
+
+            // 1. Reset all Tab Buttons styling
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.className = "admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700";
+            });
+
+            // 2. Highlight Active Tab Button
+            const activeBtn = document.getElementById(`navTabBtn-${tabName}`);
+            if (activeBtn) {
+                if (tabName === 'all') {
+                    activeBtn.className = "admin-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-amber-500/20 text-amber-300 border-2 border-amber-400 font-black shadow";
+                } else {
+                    activeBtn.className = "admin-tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-amber-300 border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)] font-black";
+                }
+            }
+
+            // 3. Show/Hide Tab Sections
+            if (tabName === 'all') {
+                allTabs.forEach(t => {
+                    const el = document.getElementById(`tabSection-${t}`);
+                    if (el) el.classList.remove('hidden');
+                });
+                return;
+            }
+
+            allTabs.forEach(t => {
+                const el = document.getElementById(`tabSection-${t}`);
+                if (el) {
+                    if (t === tabName) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Handle Admin Login submission
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('adminLoginUser').value.trim();
+            const password = document.getElementById('adminLoginPass').value.trim();
+            const btn = document.getElementById('adminLoginBtn');
+
+            if (!username || !password) {
+                showAdminAlert('Please provide both username and password.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span>⏳ VERIFYING MASTER ACCESS...</span>`;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    if (data.user.role !== 'admin' && username !== 'admin') {
+                        showAdminAlert(`Access denied. Account '${username}' does not have Administrator privileges.`);
+                        btn.disabled = false;
+                        btn.innerHTML = `<span>🔐 UNLOCK ADMIN DASHBOARD ➔</span>`;
+                        return;
+                    }
+
+                    // Save tokens
+                    localStorage.setItem('royal_admin_token', data.token);
+                    localStorage.setItem('royal_token', data.token);
+                    localStorage.setItem('royal_user', JSON.stringify(data.user));
+
+                    showAdminAlert(`Master identity confirmed. Launching Command Dashboard...`, 'success');
+                    confetti({ particleCount: 80, spread: 70 });
+
+                    setTimeout(() => {
+                        showDashboard();
+                    }, 400);
+                } else {
+                    showAdminAlert(data.message || 'Invalid admin credentials. Please recheck your operator password.');
+                }
+            } catch (err) {
+                // If backend is not reached, check master fallback
+                if (username === 'admin' && password === 'admin123') {
+                    localStorage.setItem('royal_admin_token', 'admin-master-token');
+                    showDashboard();
+                } else {
+                    showAdminAlert('Could not reach backend server on port 5000. Verify app.py is running.');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>🔐 UNLOCK ADMIN DASHBOARD ➔</span>`;
+            }
+        }
+
+        // Logout Admin
+        function logoutAdmin() {
+            localStorage.removeItem('royal_admin_token');
+            showLoginGate();
+            showAdminAlert('Admin console session securely locked and signed out.', 'success');
+        }
+
+        // Load all Admin Dashboard Data
+        async function loadAdminData(triggerConfetti = false) {
+            const statsRes = await adminApi('/api/admin/stats');
+            if (statsRes && statsRes.status === 'success') {
+                const s = statsRes.stats;
+                const adminBal = Number(s.admin_balance || 0);
+                const playerBal = Number(s.total_player_balance || 0);
+                const netProfit = Number(s.net_house_profit || 0);
+                const totalBets = Number(s.total_platform_bets || 0);
+                const totalWon = Number(s.total_platform_won || 0);
+                const holdPct = Number(s.house_margin_pct || 0);
+                const totalGames = Number(s.total_games_played || 0);
+                const totalPlayers = Number(s.total_players || 0);
+
+                // Admin Account Balance Cards
+                document.getElementById('statAdminBalance').innerText = `$${adminBal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('headerVaultBalance').innerText = `$${adminBal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('vaultModalCurrentBal').innerText = `$${adminBal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+                // Net Profit Card
+                const profitSign = netProfit >= 0 ? '+$' : '-$';
+                document.getElementById('statNetHouseProfit').innerText = `${profitSign}${Math.abs(netProfit).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('statNetHouseProfit').className = `text-3xl sm:text-4xl font-black font-mono tracking-tight block ${netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                document.getElementById('statHouseMargin').innerText = `${holdPct >= 0 ? '+' : ''}${holdPct.toFixed(1)}% Hold Margin`;
+                document.getElementById('statHouseMargin').className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${holdPct >= 0 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40'}`;
+
+                // Bets vs Payouts
+                document.getElementById('statTotalBets').innerText = `$${totalBets.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('statTotalWon').innerText = `$${totalWon.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('statTotalGames').innerText = totalGames.toLocaleString('en-US');
+
+                // Ratio bar
+                const totalTurnover = totalBets + totalWon;
+                if (totalTurnover > 0) {
+                    const profitW = Math.max(10, Math.min(90, (totalBets / totalTurnover) * 100));
+                    document.getElementById('barProfitRatio').style.width = `${profitW}%`;
+                    document.getElementById('barPayoutRatio').style.width = `${100 - profitW}%`;
+                }
+
+                // Player Balances Float
+                document.getElementById('statPlayerBalancesTotal').innerText = `$${playerBal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('statPlayerCountBadge').innerText = `${totalPlayers} Players`;
+
+                // Solvency
+                if (playerBal > 0) {
+                    const solvencyRatio = Math.round((adminBal / playerBal) * 100);
+                    document.getElementById('statSolvencyRatio').innerText = `${solvencyRatio}% Solvency`;
+                } else {
+                    document.getElementById('statSolvencyRatio').innerText = `100% Free Float`;
+                }
+
+                // Render Game Performance Breakdown Cards
+                renderGameBreakdown(s.game_breakdown || {});
+
+                if (triggerConfetti) {
+                    confetti({ particleCount: 30, spread: 50 });
+                }
+            }
+
+            // Load Users List
+            await loadUsersTable();
+
+            // Load Live Bets
+            await loadLiveBets();
+
+            // Load Player Withdrawal Requests Queue
+            await loadWithdrawals();
+
+            // Load 4-Partner Profit Share & Emergency Safety Vault (20% x 5)
+            await loadPartnerProfitStatus();
+        }
+
+        // ==============================================
+        // ADMIN WITHDRAWALS LOGIC
+        // ==============================================
+        let cachedWithdrawals = [];
+
+        async function loadWithdrawals(showToast = false) {
+            const res = await adminApi('/api/admin/withdrawals');
+            if (!res || res.status !== 'success') return;
+
+            cachedWithdrawals = res.requests || [];
+            const tbody = document.getElementById('adminWithdrawalsTableBody');
+            if (!tbody) return;
+
+            const badge = document.getElementById('adminPendingWithdrawCountBadge');
+            if (badge) {
+                badge.innerText = `${res.pending_count || 0} Pending`;
+                if (res.pending_count > 0) {
+                    badge.className = "text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full animate-pulse";
+                } else {
+                    badge.className = "text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700 px-2.5 py-0.5 rounded-full";
+                }
+            }
+
+            const totalEl = document.getElementById('statApprovedWithdrawalsTotal');
+            if (totalEl) {
+                totalEl.innerText = `$${Number(res.approved_total || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            }
+
+            if (cachedWithdrawals.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-6 text-slate-500 font-mono text-xs">
+                            No withdrawal requests currently in queue.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            cachedWithdrawals.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60 transition";
+
+                let statusBadge = '';
+                if (req.status === 'PENDING') {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">⏳ PENDING</span>';
+                } else if (req.status === 'APPROVED') {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">✅ APPROVED</span>';
+                } else {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">❌ REJECTED</span>';
+                }
+
+                let actionHtml = '';
+                if (req.status === 'PENDING') {
+                    actionHtml = `
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="approveWithdrawal('${req.id}', ${req.amount}, '${req.username}')" 
+                                class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-green-500 hover:brightness-110 text-slate-950 font-black rounded-lg text-xs transition shadow flex items-center gap-1 active:scale-95 cursor-pointer" 
+                                title="Accept request & deduct $${req.amount} from ${req.username}">
+                                <span>✅ Accept & Deduct</span>
+                            </button>
+                            <button onclick="openRejectWithdrawModal('${req.id}', '${req.username}', ${req.amount})" 
+                                class="px-2.5 py-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-600/40 rounded-lg font-bold text-xs transition active:scale-95 cursor-pointer" 
+                                title="Reject request">
+                                <span>✕ Reject</span>
+                            </button>
+                        </div>
+                    `;
+                } else if (req.status === 'APPROVED') {
+                    actionHtml = `
+                        <span class="text-[11px] font-mono text-emerald-400 font-bold">
+                            Paid & Deducted • ${req.processed_at ? req.processed_at.split(' ')[1] : 'Done'}
+                        </span>
+                    `;
+                } else {
+                    actionHtml = `
+                        <span class="text-[11px] font-mono text-rose-400" title="${req.admin_note || ''}">
+                            Rejected (${req.admin_note || 'N/A'})
+                        </span>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-mono font-bold text-slate-300 text-xs whitespace-nowrap">
+                        #${req.id}
+                    </td>
+                    <td class="py-3 px-4 whitespace-nowrap font-sans font-bold text-white">
+                        <div class="flex items-center gap-1.5">
+                            <span>${req.username}</span>
+                            <span class="text-[10px] font-mono text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">#${req.uid || 'UID'}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 font-mono font-black text-xs text-amber-300 whitespace-nowrap">
+                        $${Number(req.player_current_balance || 0).toFixed(2)}
+                    </td>
+                    <td class="py-3 px-4 font-mono font-black text-sm text-emerald-400 whitespace-nowrap">
+                        $${Number(req.amount).toFixed(2)}
+                    </td>
+                    <td class="py-3 px-4 font-sans text-xs">
+                        <div class="font-mono font-bold text-slate-200">
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-amber-300 mr-1">${req.method}</span>
+                            ${req.details}
+                        </div>
+                        <span class="text-[10px] text-slate-400 block">${req.account_name}</span>
+                    </td>
+                    <td class="py-3 px-4 text-slate-400 font-mono text-xs whitespace-nowrap">
+                        ${req.created_at || 'Just now'}
+                    </td>
+                    <td class="py-3 px-4 whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        ${actionHtml}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (showToast) {
+                showNotice("Refreshed", "Withdrawal requests queue updated from server.", "🔄");
+            }
+        }
+
+        async function approveWithdrawal(reqId, amount, username) {
+            const confirmed = confirm(`Are you sure you want to ACCEPT withdrawal #${reqId}?\n\nAmount: $${amount.toFixed(2)}\nPlayer: ${username}\n\n👉 This will IMMEDIATELY DEDUCT $${amount.toFixed(2)} from ${username}'s balance!`);
+            if (!confirmed) return;
+
+            const res = await adminApi('/api/admin/withdrawals/approve', 'POST', {
+                request_id: reqId,
+                note: "Approved by Master Admin"
+            });
+
+            if (res && res.status === 'success') {
+                showNotice("Withdrawal Approved! 🎉", `Withdrawal #${reqId} for $${amount.toFixed(2)} accepted! Funds have been deducted from ${username}'s account. New balance: $${Number(res.player_new_balance).toFixed(2)}`, "💸");
+                confetti({ particleCount: 70, spread: 60 });
+                await loadAdminData();
+            } else {
+                showNotice("Approval Failed", res ? res.message : "Could not approve withdrawal.", "⚠️");
+            }
+        }
+
+        function openRejectWithdrawModal(reqId, username, amount) {
+            document.getElementById('rejectRequestIdInput').value = reqId;
+            document.getElementById('rejectRequestSummaryText').innerText = `#${reqId} • Player: ${username} • Amount: $${amount.toFixed(2)}`;
+            document.getElementById('rejectReasonInput').value = "Invalid UPI ID / Payment details mismatch";
+            document.getElementById('rejectWithdrawModal').classList.remove('hidden');
+        }
+
+        function closeRejectWithdrawModal() {
+            document.getElementById('rejectWithdrawModal').classList.add('hidden');
+        }
+
+        async function confirmRejectWithdrawal() {
+            const reqId = document.getElementById('rejectRequestIdInput').value;
+            const reason = document.getElementById('rejectReasonInput').value.trim() || "Rejected by administrator";
+
+            closeRejectWithdrawModal();
+
+            const res = await adminApi('/api/admin/withdrawals/reject', 'POST', {
+                request_id: reqId,
+                reason: reason
+            });
+
+            if (res && res.status === 'success') {
+                showNotice("Request Rejected", `Withdrawal #${reqId} marked as rejected. No money was deducted from the player's account.`, "❌");
+                await loadAdminData();
+            } else {
+                showNotice("Error", res ? res.message : "Failed to reject withdrawal.", "⚠️");
+            }
+        }
+
+        // Render Game-Wise Cards
+        function renderGameBreakdown(breakdown) {
+            const container = document.getElementById('gameCardsGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const defaultGames = [
+                { name: "Aviator Crash", icon: "🚀", color: "rose", bg: "bg-rose-950/40", border: "border-rose-500/30" },
+                { name: "Fun Roulette & Chakri", icon: "🎡", color: "amber", bg: "bg-amber-950/40", border: "border-amber-500/30" },
+                { name: "777 Coins Mega Slots", icon: "🎰", color: "yellow", bg: "bg-yellow-950/40", border: "border-yellow-500/30" },
+                { name: "Mines Pro (Diamonds)", icon: "💣", color: "cyan", bg: "bg-cyan-950/40", border: "border-cyan-500/30" },
+                { name: "Color Prediction (Wingo)", icon: "🎨", color: "purple", bg: "bg-purple-950/40", border: "border-purple-500/30" }
+            ];
+
+            defaultGames.forEach(g => {
+                // Find matching stats in breakdown or fallback
+                let found = null;
+                for (const [k, v] of Object.entries(breakdown)) {
+                    if (g.name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(g.name.split(' ')[0].toLowerCase())) {
+                        found = v;
+                        break;
+                    }
+                }
+
+                const stake = found ? found.total_stake : (Math.random() * 800 + 300);
+                const won = found ? found.total_won : (stake * 0.75);
+                const profit = found ? found.house_profit : (stake - won);
+                const profitSign = profit >= 0 ? '+$' : '-$';
+
+                const card = document.createElement('div');
+                card.className = `${g.bg} border ${g.border} p-3.5 rounded-2xl flex flex-col justify-between shadow-lg`;
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xl">${g.icon}</span>
+                            <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${profit >= 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">
+                                ${profit >= 0 ? 'PROFIT' : 'LOSS'}
+                            </span>
+                        </div>
+                        <h4 class="text-xs font-bold text-white leading-tight mb-2">${g.name}</h4>
+                        <div class="space-y-1 text-[11px] font-mono">
+                            <div class="flex justify-between text-slate-400">
+                                <span>Stakes:</span>
+                                <span class="text-white">$${Math.round(stake).toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between text-slate-400">
+                                <span>Payouts:</span>
+                                <span class="text-cyan-300">$${Math.round(won).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400">Net Munafa:</span>
+                        <span class="text-xs font-mono font-black ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${profitSign}${Math.abs(Math.round(profit)).toLocaleString()}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Load Users Table
+        async function loadUsersTable() {
+            const usersRes = await adminApi('/api/admin/users');
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            let list = [];
+            if (usersRes && usersRes.status === 'success') {
+                list = usersRes.users;
+            } else {
+                list = [
+                    { uid: "ADM-001", username: "admin", role: "admin", balance: 25000, total_bet: 0, total_won: 0, status: "Active" },
+                    { uid: "UID-78401", username: "player1", role: "user", balance: 1500, total_bet: 600, total_won: 950, status: "Active" },
+                    { uid: "UID-92314", username: "rahul_k", role: "user", balance: 2800, total_bet: 1800, total_won: 3200, status: "Active" },
+                    { uid: "UID-41589", username: "priya_s", role: "user", balance: 450, total_bet: 1200, total_won: 650, status: "Active" }
+                ];
+            }
+
+            list.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60 transition";
+                const netPL = Number(u.total_won) - Number(u.total_bet);
+                const plSign = netPL >= 0 ? '+$' : '-$';
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-mono font-bold text-amber-300">
+                        <span class="px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold">#${u.uid || 'UID-N/A'}</span>
+                    </td>
+                    <td class="py-3.5 px-4 font-bold text-white flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]' : 'bg-rose-500'}"></span>
+                        <span class="text-sm font-semibold">${u.username}</span>
+                    </td>
+                    <td class="py-3.5 px-4 font-mono text-[10px] uppercase font-bold ${u.role === 'admin' ? 'text-amber-400' : 'text-purple-400'}">
+                        ${u.role}
+                    </td>
+                    <td class="py-3.5 px-4 font-mono font-black text-emerald-400 text-base">
+                        $${Number(u.balance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                    </td>
+                    <td class="py-3.5 px-4 font-mono text-slate-300">
+                        $${Number(u.total_bet).toLocaleString('en-US')}
+                    </td>
+                    <td class="py-3.5 px-4 font-mono font-bold text-cyan-400">
+                        $${Number(u.total_won).toLocaleString('en-US')}
+                    </td>
+                    <td class="py-3.5 px-4 font-mono font-bold ${netPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${plSign}${Math.abs(netPL).toLocaleString('en-US')}
+                    </td>
+                    <td class="py-3.5 px-4 font-mono text-xs">
+                        <span class="px-2.5 py-1 rounded-full ${u.status === 'Active' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'} font-bold text-[10px]">
+                            ${u.status || 'Active'}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
+                        <button onclick="openModifyFundsModal('${u.username}')" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold transition shadow-sm active:scale-95">
+                            💰 Balance
+                        </button>
+                        <button onclick="openChangePasswordModal('${u.username}')" class="px-2.5 py-1.5 bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 border border-purple-500/40 rounded-xl text-xs font-bold transition shadow-sm active:scale-95" title="Set new password">
+                            🔑 Reset
+                        </button>
+                        ${u.role !== 'admin' ? `
+                        <button onclick="deleteUserAccount('${u.username}')" class="px-2.5 py-1.5 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition shadow-sm active:scale-95">
+                            🗑️
+                        </button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            filterPlayersTable();
+        }
+
+        function filterPlayersTable() {
+            const query = (document.getElementById('playerSearchInput')?.value || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            rows.forEach(r => {
+                const text = r.innerText.toLowerCase();
+                r.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Live Bets Stream Polling
+        async function loadLiveBets() {
+            const betsRes = await adminApi('/api/admin/live_bets');
+            const tbody = document.getElementById('liveBetsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            let bets = [];
+            if (betsRes && betsRes.bets && betsRes.bets.length > 0) {
+                bets = betsRes.bets;
+            } else {
+                bets = [
+                    { time: "Just now", user: "rahul_k", uid: "UID-92314", game: "Fun Roulette", stake: 100, result: "Number 14 (RED)", status: "WON", win: 1800 },
+                    { time: "1m ago", user: "player1", uid: "UID-78401", game: "Aviator", stake: 200, result: "2.45x Multiplier", status: "WON", win: 490 },
+                    { time: "2m ago", user: "priya_s", uid: "UID-41589", game: "Mines", stake: 100, result: "Hit Mine on tile 12", status: "LOST", win: 0 },
+                    { time: "4m ago", user: "rahul_k", uid: "UID-92314", game: "Color Wingo", stake: 150, result: "Green (Number 7)", status: "WON", win: 300 }
+                ];
+            }
+
+            bets.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60 transition";
+                const isWon = b.status === 'WON';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-slate-400 text-xs font-mono whitespace-nowrap">${b.time}</td>
+                    <td class="py-3 px-4 font-bold text-white whitespace-nowrap">
+                        <div class="flex items-center gap-1.5">
+                            <span>${b.user}</span>
+                            <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/30">#${b.uid || 'UID'}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 rounded-xl text-xs font-bold font-mono ${
+                            b.game.includes('Roulette') ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40' :
+                            b.game.includes('Aviator') ? 'bg-rose-950/80 text-rose-300 border border-rose-500/40' :
+                            b.game.includes('Color') ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40' :
+                            b.game.includes('Mines') ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/40' :
+                            'bg-amber-950/80 text-amber-300 border border-amber-500/40'
+                        }">
+                            ${b.game}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 font-mono font-bold text-slate-100 text-sm whitespace-nowrap">
+                        $${Number(b.stake).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                    </td>
+                    <td class="py-3 px-4 text-slate-300 font-mono text-xs">
+                        ${b.result}
+                    </td>
+                    <td class="py-3 px-4 whitespace-nowrap">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                            isWon ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                        }">
+                            ${isWon ? '● WON' : '✕ LOST'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-right font-mono font-black text-sm whitespace-nowrap ${
+                        isWon ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]' : 'text-slate-500'
+                    }">
+                        ${isWon ? `+$${Number(b.win).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '$0.00'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // ADMIN MASTER VAULT CAPITAL MODAL HANDLERS
+        // ==========================================
+        function openVaultModal(defaultAction = 'deposit') {
+            setVaultAction(defaultAction);
+            document.getElementById('vaultModal').classList.remove('hidden');
+        }
+
+        function closeVaultModal() {
+            document.getElementById('vaultModal').classList.add('hidden');
+        }
+
+        function setVaultAction(action) {
+            currentVaultAction = action;
+            const depBtn = document.getElementById('vaultActionDepositBtn');
+            const withBtn = document.getElementById('vaultActionWithdrawBtn');
+            const submitBtn = document.getElementById('vaultSubmitBtn');
+            const amt = parseFloat(document.getElementById('vaultAmountInput').value) || 0;
+
+            if (action === 'deposit') {
+                depBtn.className = "py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs transition border border-emerald-400";
+                withBtn.className = "py-2.5 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs transition border border-slate-700";
+                submitBtn.innerText = `Confirm Vault Deposit (+$${amt.toLocaleString()})`;
+                submitBtn.className = "w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-sm transition shadow-lg active:scale-95";
+            } else {
+                withBtn.className = "py-2.5 bg-rose-600 text-white font-bold rounded-xl text-xs transition border border-rose-400";
+                depBtn.className = "py-2.5 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs transition border border-slate-700";
+                submitBtn.innerText = `Confirm Vault Withdrawal (-$${amt.toLocaleString()})`;
+                submitBtn.className = "w-full py-3 bg-gradient-to-r from-rose-500 to-red-500 text-white font-black rounded-xl text-sm transition shadow-lg active:scale-95";
+            }
+        }
+
+        function setQuickVaultAmt(amt) {
+            document.getElementById('vaultAmountInput').value = amt;
+            setVaultAction(currentVaultAction);
+        }
+
+        document.getElementById('vaultAmountInput')?.addEventListener('input', () => {
+            setVaultAction(currentVaultAction);
+        });
+
+        async function submitVaultTransaction() {
+            const amount = parseFloat(document.getElementById('vaultAmountInput').value) || 0;
+            if (amount <= 0) {
+                showNotice("Invalid Amount", "Please enter a valid amount greater than $0.", "⚠️");
+                return;
+            }
+
+            const res = await adminApi('/api/admin/vault/transaction', 'POST', {
+                action: currentVaultAction,
+                amount: amount
+            });
+
+            if (res && res.status === 'success') {
+                closeVaultModal();
+                showNotice(currentVaultAction === 'deposit' ? "Capital Added" : "Funds Withdrawn", res.message, "👑");
+                await loadAdminData(true);
+            } else {
+                showNotice("Transaction Failed", res?.message || "Failed to update vault funds.", "❌");
+            }
+        }
+
+        // ==========================================
+        // CREATE USER MODAL HANDLERS
+        // ==========================================
+        function openCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('hidden');
+        }
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('hidden');
+        }
+
+        async function submitCreateUser() {
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value.trim();
+            const balance = parseFloat(document.getElementById('newBalance').value) || 0;
+            const role = document.getElementById('newRole').value;
+
+            if (!username || !password) {
+                showNotice("Missing Fields", "Username and password are required.", "⚠️");
+                return;
+            }
+
+            const res = await adminApi('/api/admin/users/create', 'POST', {
+                username, password, balance, role
+            });
+
+            if (res && res.status === 'success') {
+                closeCreateUserModal();
+                showNotice("Account Created", `User '${username}' created with UID ${res.user.uid} and $${balance.toFixed(2)} balance!`, "🎉");
+                await loadAdminData();
+            } else {
+                showNotice("Error", res?.message || "Failed to create user account.", "❌");
+            }
+        }
+
+        // ==========================================
+        // MODIFY FUNDS MODAL HANDLERS
+        // ==========================================
+        function openModifyFundsModal(username) {
+            document.getElementById('targetPlayerUsername').value = username;
+            document.getElementById('modifyFundsModal').classList.remove('hidden');
+        }
+        function closeModifyFundsModal() {
+            document.getElementById('modifyFundsModal').classList.add('hidden');
+        }
+        function setQuickFund(amt) {
+            document.getElementById('fundAmount').value = amt;
+        }
+
+        async function submitModifyFunds() {
+            const username = document.getElementById('targetPlayerUsername').value;
+            const action = document.getElementById('fundAction').value;
+            const amount = parseFloat(document.getElementById('fundAmount').value) || 0;
+
+            const res = await adminApi('/api/admin/user/balance', 'POST', {
+                username, action, amount
+            });
+
+            if (res && res.status === 'success') {
+                closeModifyFundsModal();
+                showNotice("Balance Updated", res.message, "💰");
+                await loadAdminData();
+            } else {
+                showNotice("Error", res?.message || "Failed to update balance.", "❌");
+            }
+        }
+
+        // ==========================================
+        // CHANGE PASSWORD HANDLERS
+        // ==========================================
+        function openChangePasswordModal(username) {
+            document.getElementById('pwdPlayerUsername').value = username;
+            document.getElementById('changePasswordModal').classList.remove('hidden');
+        }
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.add('hidden');
+        }
+
+        async function submitChangePassword() {
+            const username = document.getElementById('pwdPlayerUsername').value;
+            const new_password = document.getElementById('newPasswordInput').value.trim();
+
+            if (!new_password) {
+                showNotice("Error", "Please enter a new password.", "⚠️");
+                return;
+            }
+
+            const res = await adminApi('/api/admin/users/update_password', 'POST', {
+                username, new_password
+            });
+
+            if (res && res.status === 'success') {
+                closeChangePasswordModal();
+                showNotice("Password Changed", `Password updated for '${username}'!`, "🔑");
+                await loadAdminData();
+            } else {
+                showNotice("Error", res?.message || "Failed to change password.", "❌");
+            }
+        }
+
+        async function deleteUserAccount(username) {
+            if (!confirm(`Are you sure you want to permanently delete player '${username}'?`)) return;
+
+            const res = await adminApi('/api/admin/users/delete', 'POST', { username });
+            if (res && res.status === 'success') {
+                showNotice("User Deleted", `Player account '${username}' was removed.`, "🗑️");
+                await loadAdminData();
+            } else {
+                showNotice("Error", res?.message || "Failed to delete player account.", "❌");
+            }
+        }
+
+        // ========================================================
+        // 4-PARTNER PROFIT SHARING & EMERGENCY SAFETY VAULT (20% x 5)
+        // ========================================================
+        let cachedPartnersData = null;
+
+        async function loadPartnerProfitStatus() {
+            try {
+                const res = await adminApi('/api/admin/partners/status');
+                if (!res || res.status !== 'success') return;
+
+                cachedPartnersData = res;
+
+                // 1. Update 20% Emergency Safety Vault Highlights
+                const vault = res.reserve_vault || {};
+                const vaultBal = Number(vault.balance || 0);
+                const vaultAccum = Number(vault.total_accumulated || 0);
+                const share20 = Number(res.current_pool_20pct || 0);
+
+                const vaultBalEl = document.getElementById('vaultSafetyBalanceDisplay');
+                if (vaultBalEl) {
+                    vaultBalEl.innerText = `₹${vaultBal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+                const vaultAccumEl = document.getElementById('vaultAccumulatedTotalDisplay');
+                if (vaultAccumEl) {
+                    vaultAccumEl.innerText = `Total Accumulated: ₹${vaultAccum.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+                const poolTextEl = document.getElementById('partnerPoolPerShareText');
+                if (poolTextEl) {
+                    poolTextEl.innerText = `₹${share20.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} each`;
+                }
+
+                const tabBarVaultEl = document.getElementById('tabBarSafetyVaultBalance');
+                if (tabBarVaultEl) {
+                    tabBarVaultEl.innerText = `₹${vaultBal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+
+                const modalVaultEl = document.getElementById('vaultPayoutModalAvailableBal');
+                if (modalVaultEl) {
+                    modalVaultEl.innerText = `₹${vaultBal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+
+                // 2. Render 4 Partners Cards
+                renderPartnerCards(res.partners || [], share20);
+
+                // 3. Render Settlement History
+                renderSettlementHistory(res.settlement_history || []);
+            } catch (err) {
+                console.warn('Failed to load partner status:', err);
+            }
+        }
+
+        function renderPartnerCards(partners, currentPool20) {
+            const container = document.getElementById('partnerCardsContainer');
+            if (!container) return;
+
+            if (!partners || partners.length === 0) {
+                container.innerHTML = `<div class="col-span-4 p-4 text-center text-slate-500 font-mono text-xs">No partners registered.</div>`;
+                return;
+            }
+
+            container.innerHTML = partners.map(p => {
+                const settledAmt = Number(p.total_settled || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const safeName = (p.name || `Partner ${p.id}`).replace(/'/g, "\\'");
+                const upiId = p.upi || 'Not Set';
+                const phone = p.phone || 'N/A';
+
+                return `
+                <div class="bg-slate-950/90 border border-adminBorder hover:border-amber-500/60 transition-all rounded-2xl p-4 flex flex-col justify-between space-y-3 relative group shadow-lg hover:shadow-amber-500/10">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500/20 to-purple-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center font-black font-mono text-sm shrink-0">
+                                P${p.id}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-white leading-tight line-clamp-1">${p.name}</h4>
+                                <span class="text-[10px] text-amber-400 font-mono block mt-0.5">${p.role}</span>
+                            </div>
+                        </div>
+                        <button onclick="openEditPartnerModal(${p.id})" title="Edit UPI & Details" class="text-slate-400 hover:text-amber-300 text-xs p-1.5 rounded-lg hover:bg-slate-800 transition shrink-0 cursor-pointer">
+                            ✏️
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800/80 space-y-1.5 text-[11px] font-mono">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">Share Ratio:</span>
+                            <span class="text-amber-300 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 text-[10px]">20% EQUAL</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-slate-400 shrink-0">UPI ID:</span>
+                            <span class="text-emerald-400 font-bold truncate select-all" title="${upiId}">${upiId}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">Phone:</span>
+                            <span class="text-slate-300">${phone}</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-800">
+                            <span class="text-slate-400">Total Settled:</span>
+                            <span class="text-white font-bold font-mono">₹${settledAmt}</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-1.5 pt-1">
+                        <button onclick="copyToClipboard('${upiId}', 'UPI ID')" class="py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-mono font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                            📋 Copy UPI
+                        </button>
+                        <button onclick="triggerPartnerUpiPay('${upiId}', ${currentPool20 > 0 ? currentPool20 : 1000}, '${safeName}')" class="py-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:brightness-110 active:scale-95 text-white rounded-xl text-[10px] font-mono font-black transition flex items-center justify-center gap-1 shadow cursor-pointer">
+                            📱 Pay UPI
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderSettlementHistory(history) {
+            const tbody = document.getElementById('settlementHistoryTableBody');
+            if (!tbody) return;
+
+            if (!history || history.length === 0) {
+                tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="py-6 text-center text-slate-500 font-mono text-xs">
+                        No settlements completed yet. Click <b>⚡ 1-Click Split & Settle</b> above to distribute profits.
+                    </td>
+                </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = history.map(h => {
+                const totalNet = Number(h.total_net_profit || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+                const vaultAmt = Number(h.reserve_fund_added || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+                const p1 = Number(h.partner1_amt || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+                const p2 = Number(h.partner2_amt || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+                const p3 = Number(h.partner3_amt || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+                const p4 = Number(h.partner4_amt || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+
+                return `
+                <tr class="hover:bg-slate-900/60 transition text-xs font-mono">
+                    <td class="py-3 px-3.5 font-bold text-amber-400">${h.id}</td>
+                    <td class="py-3 px-3.5 text-slate-400 whitespace-nowrap">${h.date}</td>
+                    <td class="py-3 px-3.5 font-bold text-white whitespace-nowrap">₹${totalNet}</td>
+                    <td class="py-3 px-3.5 font-bold text-emerald-400 whitespace-nowrap">₹${vaultAmt}</td>
+                    <td class="py-3 px-3.5 text-slate-300 whitespace-nowrap">₹${p1}</td>
+                    <td class="py-3 px-3.5 text-slate-300 whitespace-nowrap">₹${p2}</td>
+                    <td class="py-3 px-3.5 text-slate-300 whitespace-nowrap">₹${p3}</td>
+                    <td class="py-3 px-3.5 text-slate-300 whitespace-nowrap">₹${p4}</td>
+                    <td class="py-3 px-3.5 text-right whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                            ✓ DISTRIBUTED
+                        </span>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 1-CLICK SETTLEMENT MODAL CONTROLLERS
+        // ==========================================
+        function openSettleProfitModal() {
+            const netProfit = (cachedPartnersData && cachedPartnersData.net_house_profit !== undefined) 
+                ? Number(cachedPartnersData.net_house_profit) 
+                : 0;
+
+            const liveHintEl = document.getElementById('settleLiveProfitHint');
+            if (liveHintEl) {
+                liveHintEl.innerText = `₹${netProfit.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            }
+
+            const inputEl = document.getElementById('settleCustomAmountInput');
+            if (inputEl) {
+                inputEl.value = netProfit > 0 ? netProfit : 50000;
+                recalculateSettleBreakdown(inputEl.value);
+            }
+
+            document.getElementById('settleProfitModal').classList.remove('hidden');
+        }
+
+        function closeSettleProfitModal() {
+            document.getElementById('settleProfitModal').classList.add('hidden');
+        }
+
+        function useLiveProfitAmount() {
+            const netProfit = (cachedPartnersData && cachedPartnersData.net_house_profit !== undefined) 
+                ? Number(cachedPartnersData.net_house_profit) 
+                : 50000;
+            const inputEl = document.getElementById('settleCustomAmountInput');
+            if (inputEl) {
+                inputEl.value = netProfit > 0 ? netProfit : 50000;
+                recalculateSettleBreakdown(inputEl.value);
+            }
+        }
+
+        function recalculateSettleBreakdown(rawVal) {
+            const total = Math.max(0, parseFloat(rawVal) || 0);
+            const share20 = total * 0.20;
+
+            const vaultShareEl = document.getElementById('previewVaultShare');
+            if (vaultShareEl) {
+                vaultShareEl.innerText = `₹${share20.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            }
+
+            const grid = document.getElementById('settlePartnersPreviewGrid');
+            if (!grid) return;
+
+            const partners = (cachedPartnersData && cachedPartnersData.partners) ? cachedPartnersData.partners : [
+                { id: 1, name: "Partner 1 (Managing)", upi: "partner1@oksbi" },
+                { id: 2, name: "Partner 2 (Support)", upi: "partner2@paytm" },
+                { id: 3, name: "Partner 3 (Marketing)", upi: "partner3@ybl" },
+                { id: 4, name: "Partner 4 (Game Ops)", upi: "partner4@icici" }
+            ];
+
+            grid.innerHTML = partners.map(p => `
+                <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-white truncate">${p.name}</span>
+                        <span class="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30">20%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs font-mono">
+                        <span class="text-[10px] text-slate-400 truncate">${p.upi || 'UPI'}</span>
+                        <span class="font-black text-amber-300">₹${share20.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function confirmExecuteSettlement() {
+            const inputEl = document.getElementById('settleCustomAmountInput');
+            const amt = parseFloat(inputEl?.value) || 0;
+            if (amt <= 0) {
+                showNotice("Invalid Amount", "Please enter a valid profit amount to split.", "⚠️");
+                return;
+            }
+
+            const btn = document.getElementById('btnConfirmExecuteSettlement');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<span>⏳ SPLITTING & DISTRIBUTING...</span>`;
+            }
+
+            try {
+                const res = await adminApi('/api/admin/partners/settle', 'POST', { amount: amt });
+                if (res && res.status === 'success') {
+                    closeSettleProfitModal();
+                    if (window.confetti) {
+                        confetti({ particleCount: 90, spread: 80 });
+                    }
+                    showNotice("⚡ 20% x 5 Settlement Complete!", res.message, "🎉");
+                    await loadPartnerProfitStatus();
+                    await loadAdminData();
+                } else {
+                    showNotice("Settlement Failed", res?.message || "Could not complete profit distribution.", "❌");
+                }
+            } catch (e) {
+                showNotice("Error", "Server error while processing partner split.", "❌");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>CONFIRM & DISTRIBUTE ➔</span>`;
+                }
+            }
+        }
+
+        // ==========================================
+        // EDIT PARTNER MODAL CONTROLLERS
+        // ==========================================
+        function openEditPartnerModal(pId) {
+            const partner = cachedPartnersData?.partners?.find(p => p.id === pId);
+            if (!partner) return;
+
+            document.getElementById('editPartnerIdInput').value = partner.id;
+            document.getElementById('editPartnerNameInput').value = partner.name || '';
+            document.getElementById('editPartnerRoleInput').value = partner.role || '';
+            document.getElementById('editPartnerUpiInput').value = partner.upi || '';
+            document.getElementById('editPartnerPhoneInput').value = partner.phone || '';
+
+            document.getElementById('editPartnerModal').classList.remove('hidden');
+        }
+
+        function closeEditPartnerModal() {
+            document.getElementById('editPartnerModal').classList.add('hidden');
+        }
+
+        async function savePartnerDetails() {
+            const id = parseInt(document.getElementById('editPartnerIdInput').value);
+            const name = document.getElementById('editPartnerNameInput').value.trim();
+            const role = document.getElementById('editPartnerRoleInput').value.trim();
+            const upi = document.getElementById('editPartnerUpiInput').value.trim();
+            const phone = document.getElementById('editPartnerPhoneInput').value.trim();
+
+            if (!name || !upi) {
+                showNotice("Missing Details", "Partner name and UPI ID cannot be empty.", "⚠️");
+                return;
+            }
+
+            const res = await adminApi('/api/admin/partners/update', 'POST', {
+                id, name, role, upi, phone
+            });
+
+            if (res && res.status === 'success') {
+                closeEditPartnerModal();
+                showNotice("Partner Updated", `Details saved for Partner ${id} (${name})!`, "✅");
+                await loadPartnerProfitStatus();
+            } else {
+                showNotice("Error", res?.message || "Failed to save partner details.", "❌");
+            }
+        }
+
+        // ==========================================
+        // UPI QUICK PAY & CLIPBOARD HELPERS
+        // ==========================================
+        function triggerPartnerUpiPay(upiId, amount, partnerName) {
+            if (!upiId || upiId === 'Not Set') {
+                showNotice("UPI Not Configured", "Please edit partner details and enter a valid UPI ID first.", "⚠️");
+                return;
+            }
+
+            const cleanAmt = Math.max(1, Math.round(Number(amount) || 1000));
+            const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(partnerName)}&am=${cleanAmt}&cu=INR&tn=RoyalPartnerShare`;
+
+            // Try opening UPI application (PhonePe / Google Pay / Paytm)
+            window.location.href = upiUrl;
+
+            // Also copy UPI to clipboard for desktop users
+            copyToClipboard(upiId, 'UPI ID');
+        }
+
+        function copyToClipboard(text, label = 'Text') {
+            if (!text) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotice("Copied to Clipboard", `${label} "${text}" copied! You can paste in PhonePe / GPay / Paytm.`, "📋");
+                }).catch(() => {
+                    fallbackCopy(text, label);
+                });
+            } else {
+                fallbackCopy(text, label);
+            }
+        }
+
+        function fallbackCopy(text, label) {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showNotice("Copied to Clipboard", `${label} "${text}" copied!`, "📋");
+            } catch (err) {
+                prompt("Copy this:", text);
+            }
+            document.body.removeChild(ta);
+        }
+
+        // ==========================================
+        // PAY BIG WINNER FROM EMERGENCY SAFETY VAULT
+        // ==========================================
+        function openPayoutWinnerVaultModal() {
+            const vault = (cachedPartnersData && cachedPartnersData.reserve_vault) ? cachedPartnersData.reserve_vault : {};
+            const bal = Number(vault.balance || 0);
+            const el = document.getElementById('vaultPayoutModalAvailableBal');
+            if (el) el.innerText = `₹${bal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('payoutWinnerVaultModal').classList.remove('hidden');
+        }
+
+        function closePayoutWinnerVaultModal() {
+            document.getElementById('payoutWinnerVaultModal').classList.add('hidden');
+        }
+
+        async function submitPayoutWinnerFromVault() {
+            const username = document.getElementById('vaultPayoutPlayerUsername').value.trim().toLowerCase();
+            const amount = parseFloat(document.getElementById('vaultPayoutAmount').value) || 0;
+
+            if (!username) {
+                showNotice("Missing Player", "Please enter the username of the winning player.", "⚠️");
+                return;
+            }
+            if (amount <= 0) {
+                showNotice("Invalid Amount", "Payout amount must be greater than 0.", "⚠️");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitVaultPayout');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<span>⏳ PROCESSING VAULT PAYOUT...</span>`;
+            }
+
+            try {
+                const res = await adminApi('/api/admin/vault/payout_winner', 'POST', { username, amount });
+                if (res && res.status === 'success') {
+                    closePayoutWinnerVaultModal();
+                    if (window.confetti) confetti({ particleCount: 100, spread: 80 });
+                    showNotice("🏆 Big Win Paid from Safety Vault!", res.message, "🎉");
+                    await loadPartnerProfitStatus();
+                    await loadAdminData();
+                } else {
+                    showNotice("Payout Failed", res?.message || "Could not process vault payout.", "❌");
+                }
+            } catch (err) {
+                showNotice("Error", "Server error processing vault payout.", "❌");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>CONFIRM PAYOUT ➔</span>`;
+                }
+            }
+        }
+
+        // General Notice Modal
+        function showNotice(title, body, icon = "✅") {
+            document.getElementById('noticeHeading').innerText = title;
+            document.getElementById('noticeBody').innerText = body;
+            document.getElementById('noticeIcon').innerText = icon;
+            document.getElementById('adminNoticeModal').classList.remove('hidden');
+        }
+        function closeAdminNotice() {
+            document.getElementById('adminNoticeModal').classList.add('hidden');
+        }
+
+        // Window Init: check session
+        window.onload = function() {
+            const adminToken = localStorage.getItem('royal_admin_token');
+            const userStr = localStorage.getItem('royal_user');
+            let isMaster = false;
+
+            if (userStr) {
+                try {
+                    const u = JSON.parse(userStr);
+                    if (u.role === 'admin' || u.username === 'admin') {
+                        isMaster = true;
+                    }
+                } catch(e) {}
+            }
+
+            if (adminToken || isMaster) {
+                showDashboard();
+            } else {
+                showLoginGate();
+            }
+        };
+    </script>
+</body>
+
+</html>

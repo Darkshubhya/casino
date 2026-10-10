@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Login - Royal Arena VIP Casino</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        casinoGold: '#FFD700',
+                        casinoNeon: '#FF007F',
+                        casinoBg: '#060410',
+                        casinoCard: '#0f0a20',
+                        casinoBorder: '#27194a',
+                        cyberGreen: '#00FF66'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        serif: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #060410;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.22) 0px, transparent 55%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.18) 0px, transparent 55%),
+                radial-gradient(at 50% 50%, rgba(245, 158, 11, 0.08) 0px, transparent 65%);
+        }
+
+        .gold-border-glow {
+            box-shadow: 0 0 35px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.08);
+        }
+
+        .gold-button-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+        }
+        .gold-button-gradient:hover {
+            filter: brightness(1.12);
+            box-shadow: 0 6px 25px rgba(245, 158, 11, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.8);
+        }
+
+        .demo-chip-card {
+            transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .demo-chip-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        @keyframes floatPulse {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-anim {
+            animation: floatPulse 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="text-slate-100 font-sans min-h-screen flex flex-col justify-between antialiased selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- TOP HEADER -->
+    <header class="w-full px-4 sm:px-8 py-4 flex items-center justify-between border-b border-casinoBorder/60 bg-casinoBg/80 backdrop-blur-md">
+        <a href="/" class="flex items-center gap-2.5 group">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-purple-950 font-black flex items-center justify-center text-xl shadow-lg border border-amber-300/40 group-hover:scale-105 transition">
+                👑
+            </div>
+            <div>
+                <h1 class="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 tracking-wide flex items-center gap-2">
+                    ROYAL ARENA
+                    <span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold uppercase">
+                        VIP CASINO
+                    </span>
+                </h1>
+                <p class="text-[10px] text-slate-400 font-mono">50+ LIVE GAMES • 100% SECURE</p>
+            </div>
+        </a>
+
+        <div class="flex items-center gap-3">
+            <button onclick="playAsGuest()" class="text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 transition">
+                ⚡ Play as Guest
+            </button>
+            <a href="/admin" target="_blank" class="text-xs font-bold text-amber-400 hover:text-amber-300 px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1">
+                <span>👑</span>
+                <span class="hidden sm:inline">Admin</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN LOGIN CONTAINER -->
+    <main class="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div class="w-full max-w-md bg-casinoCard/95 border-2 border-casinoBorder rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden gold-border-glow backdrop-blur-xl">
+            
+            <!-- Ambient Background Glow Inside Card -->
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Crown Emblem & Title -->
+            <div class="text-center space-y-2 mb-6">
+                <div class="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-purple-950 font-black items-center justify-center text-3xl shadow-xl border-2 border-amber-300/50 float-anim">
+                    👑
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-white tracking-wide">
+                    VIP Player Portal
+                </h2>
+                <p class="text-xs text-slate-400">
+                    Log in to access your wallet, live bets & 50+ casino games
+                </p>
+            </div>
+
+            <!-- ALREADY LOGGED IN ALERT (Conditionally Displayed) -->
+            <div id="alreadyLoggedInBox" class="hidden mb-6 p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/50 text-left space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">✅</span>
+                        <div>
+                            <span class="text-xs font-mono text-emerald-400 font-bold block">CURRENTLY ACTIVE SESSION</span>
+                            <span id="activeUserLabel" class="text-sm font-black text-white">player1 (VIP Player)</span>
+                        </div>
+                    </div>
+                    <span id="activeBalanceLabel" class="text-sm font-mono font-black text-emerald-300 bg-emerald-900/50 px-2 py-1 rounded-lg border border-emerald-500/40">$1,500</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="goToLobby()" class="w-full py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black rounded-xl text-xs shadow hover:brightness-110 transition">
+                        🎮 Play Now
+                    </button>
+                    <button onclick="logoutCurrentSession()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs border border-slate-700 transition">
+                        🚪 Log Out / Switch
+                    </button>
+                </div>
+            </div>
+
+            <!-- NOTIFICATION / ERROR ALERT BOX -->
+            <div id="authAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border transition-all"></div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <!-- Username Input -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+                        Username (उपयोगकर्ता नाम)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                            👤
+                        </span>
+                        <input type="text" id="loginUsername" required autocomplete="username" placeholder="e.g. player1, rahul_k, admin" 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition font-mono">
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+                            Password (पासवर्ड)
+                        </label>
+                        <span class="text-[10px] text-amber-400 font-mono cursor-pointer hover:underline" onclick="fillDemoCredentials('player1', 'player123')">
+                            Use Demo Pass
+                        </span>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                            🔒
+                        </span>
+                        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="••••••••" 
+                            class="w-full pl-10 pr-11 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition font-mono">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', this)" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me & Terms -->
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="loginRememberMe" checked class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-400">
+                        <span>Remember on this device</span>
+                    </label>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 rounded-xl text-slate-950 font-black text-sm uppercase tracking-wider gold-button-gradient transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <span>LOG IN & PLAY NOW ➔</span>
+                </button>
+            </form>
+
+            <!-- 1-CLICK QUICK DEMO ACCOUNTS SECTION -->
+            <div class="mt-6 pt-5 border-t border-casinoBorder/80">
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+                        ⚡ Quick 1-Click Demo Accounts
+                    </span>
+                    <span class="text-[10px] text-amber-400 font-mono font-bold">Auto-Fill & Play</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <!-- player1 -->
+                    <button type="button" onclick="quickLoginDemo('player1', 'player123')" class="demo-chip-card text-left p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/80 hover:bg-slate-800 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white">player1</span>
+                            <span class="text-[9px] font-mono text-purple-400 font-bold">VIP</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-[10px] font-mono text-slate-400">Pass: player123</span>
+                            <span class="text-[10px] font-mono text-emerald-400 font-bold">$1,500</span>
+                        </div>
+                    </button>
+
+                    <!-- rahul_k -->
+                    <button type="button" onclick="quickLoginDemo('rahul_k', 'pass123')" class="demo-chip-card text-left p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/80 hover:bg-slate-800 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white">rahul_k</span>
+                            <span class="text-[9px] font-mono text-blue-400 font-bold">ROLLER</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-[10px] font-mono text-slate-400">Pass: pass123</span>
+                            <span class="text-[10px] font-mono text-emerald-400 font-bold">$2,800</span>
+                        </div>
+                    </button>
+
+                    <!-- priya_s -->
+                    <button type="button" onclick="quickLoginDemo('priya_s', 'pass123')" class="demo-chip-card text-left p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/80 hover:bg-slate-800 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white">priya_s</span>
+                            <span class="text-[9px] font-mono text-pink-400 font-bold">PRO</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-[10px] font-mono text-slate-400">Pass: pass123</span>
+                            <span class="text-[10px] font-mono text-emerald-400 font-bold">$450</span>
+                        </div>
+                    </button>
+
+                    <!-- admin -->
+                    <button type="button" onclick="quickLoginDemo('admin', 'admin123')" class="demo-chip-card text-left p-2.5 rounded-xl bg-slate-900/80 border border-amber-500/30 hover:bg-slate-800 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-amber-300">admin</span>
+                            <span class="text-[9px] font-mono text-amber-400 font-bold">OWNER</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-[10px] font-mono text-slate-400">Pass: admin123</span>
+                            <span class="text-[10px] font-mono text-emerald-400 font-bold">$25,000</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GUEST / FAST PLAY OPTION -->
+            <div class="mt-4 pt-3 text-center">
+                <button type="button" onclick="playAsGuest()" class="text-xs text-slate-400 hover:text-amber-300 transition font-medium flex items-center justify-center gap-1.5 mx-auto">
+                    <span>⚡ Skip Login & Play as Guest (Demo Mode)</span>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-4 text-slate-500 text-xs font-mono border-t border-casinoBorder/40 bg-casinoBg/50">
+        <p>🔒 256-Bit Encrypted • Provably Fair Randomness Engine • Instant Chip Settlement</p>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        const API_BASE = window.location.origin.includes('5000') ? '' : 'http://localhost:5000';
+        // Check query param for redirect target
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirect') || '/';
+
+        window.onload = async function() {
+            // Check if existing token exists
+            const existingToken = localStorage.getItem('royal_token');
+            if (existingToken) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${existingToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.status === 'success' && data.user) {
+                            showAlreadyLoggedIn(data.user);
+                        }
+                    }
+                } catch (e) {}
+            }
+        };
+
+        function showAlreadyLoggedIn(user) {
+            const box = document.getElementById('alreadyLoggedInBox');
+            if (!box) return;
+            box.classList.remove('hidden');
+            document.getElementById('activeUserLabel').innerText = `${user.username} (${user.role.toUpperCase()})`;
+            document.getElementById('activeBalanceLabel').innerText = `$${Math.floor(user.balance).toLocaleString('en-US')}`;
+        }
+
+        function goToLobby() {
+            window.location.href = redirectUrl;
+        }
+
+        async function logoutCurrentSession() {
+            const token = localStorage.getItem('royal_token');
+            if (token) {
+                try {
+                    await fetch(`${API_BASE}/api/auth/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } catch(e) {}
+            }
+            localStorage.removeItem('royal_token');
+            localStorage.removeItem('royal_user');
+            sessionStorage.removeItem('royal_guest_mode');
+            document.getElementById('alreadyLoggedInBox').classList.add('hidden');
+            showAlert('Logged out successfully. You can now log into another account.', 'success');
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        function fillDemoCredentials(u, p) {
+            document.getElementById('loginUsername').value = u;
+            document.getElementById('loginPassword').value = p;
+        }
+
+        function quickLoginDemo(u, p) {
+            fillDemoCredentials(u, p);
+            document.getElementById('loginSubmitBtn').click();
+        }
+
+        function showAlert(msg, type = 'error') {
+            const el = document.getElementById('authAlert');
+            if (!el) return;
+            el.classList.remove('hidden', 'bg-rose-950/80', 'text-rose-300', 'border-rose-500/50', 'bg-emerald-950/80', 'text-emerald-300', 'border-emerald-500/50');
+            
+            if (type === 'error') {
+                el.classList.add('bg-rose-950/80', 'text-rose-300', 'border-rose-500/50');
+                el.innerHTML = `⚠️ <b>Error:</b> ${msg}`;
+            } else {
+                el.classList.add('bg-emerald-950/80', 'text-emerald-300', 'border-emerald-500/50');
+                el.innerHTML = `🎉 <b>Success:</b> ${msg}`;
+            }
+        }
+
+        function hideAlert() {
+            const el = document.getElementById('authAlert');
+            if (el) el.classList.add('hidden');
+        }
+
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            hideAlert();
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const submitBtn = document.getElementById('loginSubmitBtn');
+
+            if (!username || !password) {
+                showAlert("Please enter both username and password.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span>⏳ LOGGING IN...</span>`;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    localStorage.setItem('royal_token', data.token);
+                    localStorage.setItem('royal_user', JSON.stringify(data.user));
+                    sessionStorage.removeItem('royal_guest_mode');
+
+                    if (data.user.role === 'admin') {
+                        localStorage.setItem('royal_admin_token', data.token);
+                    }
+
+                    showAlert(`Welcome back, ${data.user.username}! Redirecting...`, 'success');
+                    confetti({ particleCount: 70, spread: 60 });
+
+                    setTimeout(() => {
+                        const params = new URLSearchParams(window.location.search);
+                        const redirectParam = params.get('redirect');
+                        if (data.user.role === 'admin' && (!redirectParam || redirectParam === '/')) {
+                            window.location.href = '/admin';
+                        } else {
+                            window.location.href = redirectUrl;
+                        }
+                    }, 500);
+                } else {
+                    showAlert(data.message || "Invalid username or password. Please try again.");
+                }
+            } catch (err) {
+                showAlert("Could not connect to backend server. Make sure the backend (app.py) is running on port 5000.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>LOG IN & PLAY NOW ➔</span>`;
+            }
+        }
+
+        function playAsGuest() {
+            sessionStorage.setItem('royal_guest_mode', 'true');
+            window.location.href = redirectUrl;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+
+32: 1224:         <!-- ============================================== -->
+33: 1225:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+34: 1226:             <!-- Fun Roulette Chakri Canvas -->
+35: 1227:             <div class="flex justify-between items-center border-b border-amber-500/40 pb-2">
+36: 1228:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+37: 1229:                 <span class="font-serif font-black text-amber-300">Mini Roulette (Chakri 0-18)</span>
+38: 1230:                 <span id="rouletteWinnerText" class="text-lg font-mono font-black text-amber-300">--</span>
+39: 1231:             </div>
+40: 1232:             <div class="flex flex-col items-center justify-center">
+41: 1233:                 <canvas id="funRouletteCanvas" width="340" height="340" class="drop-shadow-2xl"></canvas>
+42: 1234:             </div>
+43: 1235:             <div class="text-center pt-2">
+44: 1236:                 <button onclick="confirmRouletteBetAndSpin(true)" class="px-8 py-3 rounded-xl bg-amber-500 text-purple-950 font-black uppercase text-sm shadow hover:brightness-110">
+45: 1237:                     🎡 SPIN CHAKRI ($100)
+46: 1238:                 </button>
+47: 1239:             </div>
+48: 1240:         </div>
+49: 1241: 
+50: 1242:         <div id="gameAviatorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+51: 1243:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+52: 1244:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-rose-300 text-xs font-bold">← Lobby</button>
+53: 1245:                 <span class="font-bold text-white text-base">Aviator Crash</span>
+54: 1246:                 <span id="aviatorMultiplierText" class="text-2xl font-mono font-black text-rose-400">1.00x</span>
+55: 1247:             </div>
+56: 1248:             <div class="h-64 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden border border-slate-800">
+57: 1249:                 <canvas id="aviatorCanvas" width="600" height="250" class="w-full h-full block"></canvas>
+58: 1250:             </div>
+59: 1251:             <button id="btnAviatorAction" onclick="handleAviatorAction()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-2xl text-lg uppercase shadow">
+60: 1252:                 🚀 BET $100
+61: 1253:             </button>
+62: 1254:         </div>
+63: 1255: 
+64: 1256:         <div id="gameColorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+65: 1257:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+66: 1258:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-purple-300 text-xs font-bold">← Lobby</button>
+67: 1259:                 <span class="font-bold text-white text-base">Color Wingo</span>
+68: 1260:                 <span id="colorTimerDisplay" class="text-sm font-mono font-bold text-rose-400">00:15</span>
+69: 1261:             </div>
+70: 1262:             <div class="grid grid-cols-3 gap-3">
+71: 1263:                 <button onclick="submitColorChoice('GREEN')" class="py-4 bg-emerald-600 rounded-2xl font-black text-white text-base shadow">🟢 GREEN (2x)</button>
+72: 1264:                 <button onclick="submitColorChoice('VIOLET')" class="py-4 bg-purple-700 rounded-2xl font-black text-white text-base shadow">🟣 VIOLET (4.5x)</button>
+73: 1265:                 <button onclick="submitColorChoice('RED')" class="py-4 bg-rose-600 rounded-2xl font-black text-white text-base shadow">🔴 RED (2x)</button>
+74: 1266:             </div>
+75: 1267:         </div>
+76: 1268: 
+77: 1269:         <div id="gameMinesContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+78: 1270:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+79: 1271:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-cyan-300 text-xs font-bold">← Lobby</button>
+80: 1272:                 <span class="font-bold text-white text-base">Mines Grid 5x5</span>
+81: 1273:                 <span id="minesMultiplierDisplay" class="text-sm font-mono font-bold text-emerald-400">1.00x</span>
+82: 1274:             </div>
+83: 1275:             <div id="minesGridElement" class="grid grid-cols-5 gap-2 max-w-[340px] mx-auto p-3 bg-black/60 rounded-3xl border border-casinoBorder">
+84: 1276:             </div>
+85: 1277:             <button id="btnMinesMain" onclick="handleMinesBtnAction()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-purple-950 font-black rounded-2xl text-base uppercase shadow">
+86: 1278:                 💣 START MINES GAME ($100)
+87: 1279:             </button>
+88: 1280:         </div>
+89: 1281: 
+90: 1282:         <div id="gameSlotsContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+91: 1283:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+92: 1284:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+93: 1285:                 <span class="font-bold text-white text-base">Lucky 777 Slots</span>
+94: 1286:                 <span id="slotStatusBanner" class="text-xs font-bold text-amber-400">Triple 7s pays 15x</span>
+95: 1287:             </div>
+96: 1288:             <div class="max-w-md mx-auto grid grid-cols-3 gap-3 bg-black/80 p-6 rounded-2xl border-2 border-amber-500/40">
+97: 1289:                 <div id="slotReel1" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+98: 1290:                 <div id="slotReel2" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+99: 1291:                 <div id="slotReel3" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+100: 1292:             </div>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

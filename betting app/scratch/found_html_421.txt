@@ -1,0 +1,10 @@
+n f:
+5:         data = json.loads(line)
+6:         content = data.get('content', '')
+7:         if 'id="gameRouletteContainer"' in content and 'funRouletteCanvas' in content:
+8:             with open('scratch/orig_roulette_container.html', 'w', encoding='utf-8') as out:
+9:                 out.write(content)
+10:             print("Found HTML!")
+11:             break
+12: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,8 @@
+
+1651:         <!-- ======================================================== -->
+1652:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1653:             <!-- Header & Period & Timer -->
+1654:             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-amber-500/40 pb-3">
+1655:                 <div class="flex items-center gap-3">
+1656:                     <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold transition">
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

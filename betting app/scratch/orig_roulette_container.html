@@ -1,0 +1,209 @@
+Created At: 2026-10-02T15:40:46+05:30
+Completed At: 2026-10-02T15:40:46+05:30
+File Path: `file:///c:/Users/vedan/OneDrive/Documents/betting%20app/index.html`
+Total Lines: 2614
+Total Bytes: 167149
+Showing lines 1200 to 1400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1200:                     <div class="space-y-1.5 pt-2 border-t border-slate-800">
+1201:                         <div class="flex justify-between text-xs text-slate-300">
+1202:                             <span class="font-semibold">Stake Amount:</span>
+1203:                             <span id="dynStakeDisplay" class="font-mono font-bold text-amber-300">$100</span>
+1204:                         </div>
+1205:                         <div class="grid grid-cols-4 gap-2">
+1206:                             <button onclick="setDynBet(50)" class="py-2 rounded-xl bg-slate-800 text-xs font-bold font-mono">$50</button>
+1207:                             <button onclick="setDynBet(100)" class="py-2 rounded-xl bg-amber-500/30 text-amber-300 border border-amber-500/50 text-xs font-bold font-mono">$100</button>
+1208:                             <button onclick="setDynBet(500)" class="py-2 rounded-xl bg-slate-800 text-xs font-bold font-mono">$500</button>
+1209:                             <button onclick="setDynBet(1000)" class="py-2 rounded-xl bg-purple-900/60 text-purple-300 text-xs font-bold font-mono">$1K</button>
+1210:                         </div>
+1211:                     </div>
+1212: 
+1213:                     <button id="btnDynPlay" onclick="executeDynamicGameAction()" 
+1214:                         class="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-purple-950 font-black text-lg rounded-2xl shadow-xl hover:brightness-110 active:scale-98 transition uppercase tracking-wider glow-btn">
+1215:                         ▶ PLAY ROUND ($100)
+1216:                     </button>
+1217:                 </div>
+1218:             </div>
+1219:         </div>
+1220: 
+1221:         <!-- ============================================== -->
+1222:         <!-- PRESERVED ENGINES: AVIATOR, MINES, COLOR, SLOTS & ROULETTE -->
+1223:         <!-- (Already defined & fully functional) -->
+1224:         <!-- ============================================== -->
+1225:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1226:             <!-- Fun Roulette Chakri Canvas -->
+1227:             <div class="flex justify-between items-center border-b border-amber-500/40 pb-2">
+1228:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+1229:                 <span class="font-serif font-black text-amber-300">Mini Roulette (Chakri 0-18)</span>
+1230:                 <span id="rouletteWinnerText" class="text-lg font-mono font-black text-amber-300">--</span>
+1231:             </div>
+1232:             <div class="flex flex-col items-center justify-center">
+1233:                 <canvas id="funRouletteCanvas" width="340" height="340" class="drop-shadow-2xl"></canvas>
+1234:             </div>
+1235:             <div class="text-center pt-2">
+1236:                 <button onclick="confirmRouletteBetAndSpin(true)" class="px-8 py-3 rounded-xl bg-amber-500 text-purple-950 font-black uppercase text-sm shadow hover:brightness-110">
+1237:                     🎡 SPIN CHAKRI ($100)
+1238:                 </button>
+1239:             </div>
+1240:         </div>
+1241: 
+1242:         <div id="gameAviatorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1243:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1244:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-rose-300 text-xs font-bold">← Lobby</button>
+1245:                 <span class="font-bold text-white text-base">Aviator Crash</span>
+1246:                 <span id="aviatorMultiplierText" class="text-2xl font-mono font-black text-rose-400">1.00x</span>
+1247:             </div>
+1248:             <div class="h-64 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden border border-slate-800">
+1249:                 <canvas id="aviatorCanvas" width="600" height="250" class="w-full h-full block"></canvas>
+1250:             </div>
+1251:             <button id="btnAviatorAction" onclick="handleAviatorAction()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-2xl text-lg uppercase shadow">
+1252:                 🚀 BET $100
+1253:             </button>
+1254:         </div>
+1255: 
+1256:         <div id="gameColorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1257:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1258:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-purple-300 text-xs font-bold">← Lobby</button>
+1259:                 <span class="font-bold text-white text-base">Color Wingo</span>
+1260:                 <span id="colorTimerDisplay" class="text-sm font-mono font-bold text-rose-400">00:15</span>
+1261:             </div>
+1262:             <div class="grid grid-cols-3 gap-3">
+1263:                 <button onclick="submitColorChoice('GREEN')" class="py-4 bg-emerald-600 rounded-2xl font-black text-white text-base shadow">🟢 GREEN (2x)</button>
+1264:                 <button onclick="submitColorChoice('VIOLET')" class="py-4 bg-purple-700 rounded-2xl font-black text-white text-base shadow">🟣 VIOLET (4.5x)</button>
+1265:                 <button onclick="submitColorChoice('RED')" class="py-4 bg-rose-600 rounded-2xl font-black text-white text-base shadow">🔴 RED (2x)</button>
+1266:             </div>
+1267:         </div>
+1268: 
+1269:         <div id="gameMinesContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1270:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1271:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-cyan-300 text-xs font-bold">← Lobby</button>
+1272:                 <span class="font-bold text-white text-base">Mines Grid 5x5</span>
+1273:                 <span id="minesMultiplierDisplay" class="text-sm font-mono font-bold text-emerald-400">1.00x</span>
+1274:             </div>
+1275:             <div id="minesGridElement" class="grid grid-cols-5 gap-2 max-w-[340px] mx-auto p-3 bg-black/60 rounded-3xl border border-casinoBorder">
+1276:             </div>
+1277:             <button id="btnMinesMain" onclick="handleMinesBtnAction()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-purple-950 font-black rounded-2xl text-base uppercase shadow">
+1278:                 💣 START MINES GAME ($100)
+1279:             </button>
+1280:         </div>
+1281: 
+1282:         <div id="gameSlotsContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1283:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1284:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+1285:                 <span class="font-bold text-white text-base">Lucky 777 Slots</span>
+1286:                 <span id="slotStatusBanner" class="text-xs font-bold text-amber-400">Triple 7s pays 15x</span>
+1287:             </div>
+1288:             <div class="max-w-md mx-auto grid grid-cols-3 gap-3 bg-black/80 p-6 rounded-2xl border-2 border-amber-500/40">
+1289:                 <div id="slotReel1" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+1290:                 <div id="slotReel2" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+1291:                 <div id="slotReel3" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+1292:             </div>
+1293:             <button id="btnSlotSpin" onclick="handleSlotSpin()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-purple-950 font-black rounded-2xl text-base uppercase shadow">
+1294:                 🎰 SPIN REELS ($100)
+1295:             </button>
+1296:         </div>
+1297: 
+1298:     </main>
+1299: 
+1300:     <!-- RULES MODAL -->
+1301:     <div id="rulesModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 hidden">
+1302:         <div class="bg-casinoCard border border-casinoBorder max-w-xl w-full rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+1303:             <div class="flex items-center justify-between border-b border-casinoBorder pb-3">
+1304:                 <h3 class="text-lg font-black text-white flex items-center gap-2">📖 50+ Games Rules</h3>
+1305:                 <button onclick="closeRulesModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+1306:             </div>
+1307:             <div class="space-y-3 text-xs text-slate-300 leading-relaxed font-mono">
+1308:                 <p><b>🎯 Carrom:</b> Position striker, charge power, pocket White (2x), Black (1.5x) or Queen + Cover (5x).</p>
+1309:                 <p><b>🎲 Ludo:</b> Roll 3D dice, capture tokens for 4x, reach home for 15x!</p>
+1310:                 <p><b>📊 Big / Small:</b> Small (0-4 @ 2x), Big (5-9 @ 2x), Odd/Even (2x), Numbers (9x).</p>
+1311:                 <p><b>🐅 Dragon Tiger:</b> High card wins. Tie pays 9x.</p>
+1312:                 <p><b>🃏 Andar Bahar:</b> Match the opening Joker card rank on Andar or Bahar.</p>
+1313:             </div>
+1314:             <button onclick="closeRulesModal()" class="w-full py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs">Close</button>
+1315:         </div>
+1316:     </div>
+1317: 
+1318:     <!-- AUTH MODAL -->
+1319:     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 hidden">
+1320:         <div class="bg-casinoCard border border-casinoBorder max-w-sm w-full rounded-3xl p-6 shadow-2xl space-y-4">
+1321:             <div class="flex justify-between border-b border-casinoBorder pb-2">
+1322:                 <span class="text-sm font-black text-amber-300">PLAYER LOGIN</span>
+1323:                 <button onclick="closeAuthModal()" class="text-slate-400">✕</button>
+1324:             </div>
+1325:             <input type="text" id="authUsernameInput" placeholder="Username" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+1326:             <input type="password" id="authPasswordInput" placeholder="Password" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+1327:             <button onclick="submitAuthForm()" class="w-full py-2.5 bg-amber-500 text-purple-950 font-black rounded-xl text-xs">Log In</button>
+1328:         </div>
+1329:     </div>
+1330: 
+1331:     <!-- ============================================== -->
+1332:     <!-- JAVASCRIPT LOGIC & 50+ REAL GAME ENGINES -->
+1333:     <!-- ============================================== -->
+1334:     <script>
+1335:         const API_BASE = window.location.origin.includes('5000') ? '' : 'http://localhost:5000';
+1336:         let currentUser = { username: "player1", role: "user", balance: 1000 };
+1337:         let authToken = "";
+1338:         let localWallet = 1000;
+1339:         let isAudioMuted = false;
+1340:         let audioCtx = null;
+1341: 
+1342:         function getAudioContext() {
+1343:             if (!audioCtx) {
+1344:                 const AC = window.AudioContext || window.webkitAudioContext;
+1345:                 if (AC) audioCtx = new AC();
+1346:             }
+1347:             if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+1348:             return audioCtx;
+1349:         }
+1350: 
+1351:         function toggleAudioMute() {
+1352:             isAudioMuted = !isAudioMuted;
+1353:             const btn = document.getElementById('btnAudioMute');
+1354:             if (btn) btn.innerText = isAudioMuted ? '🔇' : '🔊';
+1355:         }
+1356: 
+1357:         function playSound(type) {
+1358:             if (isAudioMuted) return;
+1359:             try {
+1360:                 const ctx = getAudioContext();
+1361:                 if (!ctx) return;
+1362:                 const osc = ctx.createOscillator();
+1363:                 const gain = ctx.createGain();
+1364:                 if (type === 'strike') {
+1365:                     osc.type = 'triangle';
+1366:                     osc.frequency.setValueAtTime(260, ctx.currentTime);
+1367:                     osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.1);
+1368:                     gain.gain.setValueAtTime(0.4, ctx.currentTime);
+1369:                     gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+1370:                     osc.connect(gain); gain.connect(ctx.destination);
+1371:                     osc.start(); osc.stop(ctx.currentTime + 0.1);
+1372:                 } else if (type === 'dice') {
+1373:                     for (let i = 0; i < 3; i++) {
+1374:                         setTimeout(() => {
+1375:                             const o = ctx.createOscillator(); const g = ctx.createGain();
+1376:                             o.type = 'sine'; o.frequency.setValueAtTime(450 + Math.random()*200, ctx.currentTime);
+1377:                             g.gain.setValueAtTime(0.15, ctx.currentTime);
+1378:                             g.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.04);
+1379:                             o.connect(g); g.connect(ctx.destination);
+1380:                             o.start(); o.stop(ctx.currentTime + 0.04);
+1381:                         }, i * 50);
+1382:                     }
+1383:                 } else if (type === 'win') {
+1384:                     [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+1385:                         setTimeout(() => {
+1386:                             const o = ctx.createOscillator(); const g = ctx.createGain();
+1387:                             o.type = 'triangle'; o.frequency.setValueAtTime(f, ctx.currentTime);
+1388:                             g.gain.setValueAtTime(0.2, ctx.currentTime);
+1389:                             g.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+1390:                             o.connect(g); g.connect(ctx.destination);
+1391:                             o.start(); o.stop(ctx.currentTime + 0.2);
+1392:                         }, i * 60);
+1393:                     });
+1394:                 } else {
+1395:                     osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+1396:                     gain.gain.setValueAtTime(0.1, ctx.currentTime);
+1397:                     gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+1398:                     osc.connect(gain); gain.connect(ctx.destination);
+1399:                     osc.start(); osc.stop(ctx.currentTime + 0.05);
+1400:                 }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

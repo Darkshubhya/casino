@@ -1,0 +1,10 @@
+ional) -->
+1224:         <!-- ============================================== -->
+1225:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1226:             <!-- Fun Roulette Chakri Canvas -->
+1227:             <div class="flex justify-between items-center border-b border-amber-500/40 pb-2">
+1228:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+1229:                 <span class="font-serif font-black text-amber-300">Mini Roulette (Chakri 0-18)</span>
+1230:                 <span id="rouletteWinnerText" class="text-lg font-mono font-black text-amber-300">--</span>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+

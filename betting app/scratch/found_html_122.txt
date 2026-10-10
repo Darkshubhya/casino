@@ -1,0 +1,97 @@
+ional) -->
+1224:         <!-- ============================================== -->
+1225:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1226:             <!-- Fun Roulette Chakri Canvas -->
+1227:             <div class="flex justify-between items-center border-b border-amber-500/40 pb-2">
+1228:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+1229:                 <span class="font-serif font-black text-amber-300">Mini Roulette (Chakri 0-18)</span>
+1230:                 <span id="rouletteWinnerText" class="text-lg font-mono font-black text-amber-300">--</span>
+1231:             </div>
+1232:             <div class="flex flex-col items-center justify-center">
+1233:                 <canvas id="funRouletteCanvas" width="340" height="340" class="drop-shadow-2xl"></canvas>
+1234:             </div>
+1235:             <div class="text-center pt-2">
+1236:                 <button onclick="confirmRouletteBetAndSpin(true)" class="px-8 py-3 rounded-xl bg-amber-500 text-purple-950 font-black uppercase text-sm shadow hover:brightness-110">
+1237:                     🎡 SPIN CHAKRI ($100)
+1238:                 </button>
+1239:             </div>
+1240:         </div>
+1241: 
+1242:         <div id="gameAviatorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1243:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1244:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-rose-300 text-xs font-bold">← Lobby</button>
+1245:                 <span class="font-bold text-white text-base">Aviator Crash</span>
+1246:                 <span id="aviatorMultiplierText" class="text-2xl font-mono font-black text-rose-400">1.00x</span>
+1247:             </div>
+1248:             <div class="h-64 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden border border-slate-800">
+1249:                 <canvas id="aviatorCanvas" width="600" height="250" class="w-full h-full block"></canvas>
+1250:             </div>
+1251:             <button id="btnAviatorAction" onclick="handleAviatorAction()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-2xl text-lg uppercase shadow">
+1252:                 🚀 BET $100
+1253:             </button>
+1254:         </div>
+1255: 
+1256:         <div id="gameColorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1257:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1258:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-purple-300 text-xs font-bold">← Lobby</button>
+1259:                 <span class="font-bold text-white text-base">Color Wingo</span>
+1260:                 <span id="colorTimerDisplay" class="text-sm font-mono font-bold text-rose-400">00:15</span>
+1261:             </div>
+1262:             <div class="grid grid-cols-3 gap-3">
+1263:                 <button onclick="submitColorChoice('GREEN')" class="py-4 bg-emerald-600 rounded-2xl font-black text-white text-base shadow">🟢 GREEN (2x)</button>
+1264:                 <button onclick="submitColorChoice('VIOLET')" class="py-4 bg-purple-700 rounded-2xl font-black text-white text-base shadow">🟣 VIOLET (4.5x)</button>
+1265:                 <button onclick="submitColorChoice('RED')" class="py-4 bg-rose-600 rounded-2xl font-black text-white text-base shadow">🔴 RED (2x)</button>
+1266:             </div>
+1267:         </div>
+1268: 
+1269:         <div id="gameMinesContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1270:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1271:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-cyan-300 text-xs font-bold">← Lobby</button>
+1272:                 <span class="font-bold text-white text-base">Mines Grid 5x5</span>
+1273:                 <span id="minesMultiplierDisplay" class="text-sm font-mono font-bold text-emerald-400">1.00x</span>
+1274:             </div>
+1275:             <div id="minesGridElement" class="grid grid-cols-5 gap-2 max-w-[340px] mx-auto p-3 bg-black/60 rounded-3xl border border-casinoBorder">
+1276:             </div>
+1277:             <button id="btnMinesMain" onclick="handleMinesBtnAction()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-purple-950 font-black rounded-2xl text-base uppercase shadow">
+1278:                 💣 START MINES GAME ($100)
+1279:             </button>
+1280:         </div>
+1281: 
+1282:         <div id="gameSlotsContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1283:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1284:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+1285:                 <span class="font-bold text-white text-base">Lucky 777 Slots</span>
+1286:                 <span id="slotStatusBanner" class="text-xs font-bold text-amber-400">Triple 7s pays 15x</span>
+1287:             </div>
+1288:             <div class="max-w-md mx-auto grid grid-cols-3 gap-3 bg-black/80 p-6 rounded-2xl border-2 border-amber-500/40">
+1289:                 <div id="slotReel1" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+1290:                 <div id="slotReel2" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+1291:                 <div id="slotReel3" class="h-24 bg-slate-900 rounded-xl flex items-center justify-center text-4xl">7️⃣</div>
+1292:             </div>
+1293:             <button id="btnSlotSpin" onclick="handleSlotSpin()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-purple-950 font-black rounded-2xl text-base uppercase shadow">
+1294:                 🎰 SPIN REELS ($100)
+1295:             </button>
+1296:         </div>
+1297: 
+1298:     </main>
+1299: 
+1300:     <!-- RULES MODAL -->
+1301:     <div id="rulesModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 hidden">
+1302:         <div class="bg-casinoCard border border-casinoBorder max-w-xl w-full rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+1303:             <div class="flex items-center justify-between border-b border-casinoBorder pb-3">
+1304:                 <h3 class="text-lg font-black text-white flex items-center gap-2">📖 50+ Games Rules</h3>
+1305:                 <button onclick="closeRulesModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+1306:             </div>
+1307:             <div class="space-y-3 text-xs text-slate-300 leading-relaxed font-mono">
+1308:                 <p><b>🎯 Carrom:</b> Position striker, charge power, pocket White (2x), Black (1.5x) or Queen + Cover (5x).</p>
+1309:                 <p><b>🎲 Ludo:</b> Roll 3D dice, capture tokens for 4x, reach home for 15x!</p>
+1310:                 <p><b>📊 Big / Small:</b> Small (0-4 @ 2x), Big (5-9 @ 2x), Odd/Even (2x), Numbers (9x).</p>
+1311:                 <p><b>🐅 Dragon Tiger:</b> High card wins. Tie pays 9x.</p>
+1312:                 <p><b>🃏 Andar Bahar:</b> Match the opening Joker card rank on Andar or Bahar.</p>
+1313:             </div>
+1314:             <button onclick="closeRulesModal()" class="w-full py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs">Close</button>
+1315:         </div>
+1316:     </div>
+1317: 
+1318:     <!-- AUTH MODAL -->
+1319:     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 h

@@ -1,0 +1,17 @@
+ f:
+8:         data = json.loads(line)
+9:         content = data.get('content', '')
+10:         if 'id="gameRouletteContainer"' in content and 'rouletteStatusBanner' in content:
+11:             html_found = content
+12:         if 'function confirmRouletteBetAndSpin' in content and 'function animateRouletteSpin' in content:
+13:             js_found = content
+14: 
+15: with open('scratch/roulette_html.txt', 'w', encoding='utf-8') as out:
+16:     out.write(html_found or 'NOT FOUND')
+17: 
+18: with open('scratch/roulette_js.txt', 'w', encoding='utf-8') as out:
+19:     out.write(js_found or 'NOT FOUND')
+20: 
+21: print("Extraction done!")
+22: 
+The above content shows the entire, complete file contents of the requested file.

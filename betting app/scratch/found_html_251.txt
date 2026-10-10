@@ -1,0 +1,34 @@
+eting the original code should remove the line number, colon, and leading space.
+1649:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1650:             <!-- Fun Roulette Chakri Canvas -->
+1651:             <div class="flex justify-between items-center border-b border-amber-500/40 pb-2">
+1652:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 text-xs font-bold">← Lobby</button>
+1653:                 <span class="font-serif font-black text-amber-300">Mini Roulette (Chakri 0-18)</span>
+1654:                 <span id="rouletteWinnerText" class="text-lg font-mono font-black text-amber-300">--</span>
+1655:             </div>
+1656:             <div class="flex flex-col items-center justify-center">
+1657:                 <canvas id="funRouletteCanvas" width="340" height="340" class="drop-shadow-2xl"></canvas>
+1658:             </div>
+1659:             <div class="text-center pt-2">
+1660:                 <button onclick="confirmRouletteBetAndSpin(true)" class="px-8 py-3 rounded-xl bg-amber-500 text-purple-950 font-black uppercase text-sm shadow hover:brightness-110">
+1661:                     🎡 SPIN CHAKRI ($100)
+1662:                 </button>
+1663:             </div>
+1664:         </div>
+1665: 
+1666:         <div id="gameAviatorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1667:             <div class="flex justify-between items-center border-b border-casinoBorder pb-2">
+1668:                 <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 text-rose-300 text-xs font-bold">← Lobby</button>
+1669:                 <span class="font-bold text-white text-base">Aviator Crash</span>
+1670:                 <span id="aviatorMultiplierText" class="text-2xl font-mono font-black text-rose-400">1.00x</span>
+1671:             </div>
+1672:             <div class="h-64 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden border border-slate-800">
+1673:                 <canvas id="aviatorCanvas" width="600" height="250" class="w-full h-full block"></canvas>
+1674:             </div>
+1675:             <button id="btnAviatorAction" onclick="handleAviatorAction()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-2xl text-lg uppercase shadow">
+1676:                 🚀 BET $100
+1677:             </button>
+1678:         </div>
+1679: 
+1680:         <div id="gameColorContainer" class="game-panel bg-casinoCard border border-casinoBorder rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

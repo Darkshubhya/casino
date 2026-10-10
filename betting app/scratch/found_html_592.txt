@@ -1,0 +1,85 @@
+
+1651:         <!-- ======================================================== -->
+1652:         <div id="gameRouletteContainer" class="game-panel casino-felt rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 hidden">
+1653:             <!-- Header Bar -->
+1654:             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-amber-500/40 pb-3">
+1655:                 <div class="flex items-center gap-3">
+1656:                     <button onclick="returnToLobby()" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold transition">
+1657:                         ← Lobby
+1658:                     </button>
+1659:                     <span class="text-3xl">🎡</span>
+1660:                     <div>
+1661:                         <h2 class="text-lg font-black text-white flex items-center gap-2 font-serif">
+1662:                             Fun Roulette (फन रूलेट चक्री 0-18)
+1663:                             <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold">
+1664:                                 18x SINGLE NUMBER
+1665:                             </span>
+1666:                         </h2>
+1667:                         <p class="text-xs text-amber-200/90 font-medium">Place your chips on any number or color and spin anytime!</p>
+1668:                     </div>
+1669:                 </div>
+1670: 
+1671:                 <!-- Winning / Status Display -->
+1672:                 <div class="flex items-center gap-3 bg-black/70 px-4 py-2 rounded-2xl border border-amber-500/40 shadow-inner">
+1673:                     <span class="text-xs font-serif font-black text-amber-300" id="rouletteWinnerText">Spin to Play!</span>
+1674:                 </div>
+1675:             </div>
+1676: 
+1677:             <!-- Previous Winning Numbers Strip -->
+1678:             <div class="bg-black/50 border border-amber-500/20 rounded-2xl p-2.5 flex items-center gap-3 overflow-x-auto">
+1679:                 <span class="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider shrink-0">Recent Results:</span>
+1680:                 <div id="frHistoryStrip" class="flex items-center gap-2">
+1681:                     <span class="w-7 h-7 rounded-full bg-rose-600 text-white font-black text-xs flex items-center justify-center border border-white/60 shadow">12</span>
+1682:                     <span class="w-7 h-7 rounded-full bg-slate-900 text-white font-black text-xs flex items-center justify-center border border-white/60 shadow">7</span>
+1683:                     <span class="w-7 h-7 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center border border-white/60 shadow">0</span>
+1684:                     <span class="w-7 h-7 rounded-full bg-rose-600 text-white font-black text-xs flex items-center justify-center border border-white/60 shadow">18</span>
+1685:                     <span class="w-7 h-7 rounded-full bg-slate-900 text-white font-black text-xs flex items-center justify-center border border-white/60 shadow">3</span>
+1686:                     <span class="w-7 h-7 rounded-full bg-rose-600 text-white font-black text-xs flex items-center justify-center border border-white/60 shadow">15</span>
+1687:                 </div>
+1688:             </div>
+1689: 
+1690:             <!-- Main Roulette Arena (3D Wheel + Chakri Betting Board) -->
+1691:             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+1692:                 <!-- 3D Fun Roulette Wheel Canvas + Direct Spin Button -->
+1693:                 <div class="lg:col-span-5 flex flex-col items-center justify-center relative space-y-3">
+1694:                     <div class="relative p-2 rounded-full bg-gradient-to-tr from-amber-700 via-yellow-400 to-amber-800 shadow-[0_0_50px_rgba(234,179,8,0.35)] border-4 border-yellow-200">
+1695:                         <!-- Top Pointer Needle -->
+1696:                         <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20 text-2xl filter drop-shadow">
+1697:                             🔻
+1698:                         </div>
+1699:                         <canvas id="funRouletteCanvas" width="360" height="360" class="rounded-full block drop-shadow-2xl"></canvas>
+1700:                         <!-- Center Diamond Hub Overlay -->
+1701:                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+1702:                             <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-300 to-amber-700 border-2 border-white shadow-2xl flex items-center justify-center text-2xl animate-pulse">
+1703:                                 💎
+1704:                             </div>
+1705:                         </div>
+1706:                     </div>
+1707: 
+1708:                     <!-- Direct Spin Chakri Button -->
+1709:                     <button id="btnSpinChakri" onclick="confirmRouletteBetAndSpin(true)" class="w-full max-w-[280px] py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-purple-950 font-black text-base rounded-2xl shadow-xl hover:brightness-110 active:scale-95 transition uppercase tracking-wider glow-btn flex items-center justify-center gap-2">
+1710:                         <span>🎡 SPIN CHAKRI</span>
+1711:                     </button>
+1712: 
+1713:                     <!-- Result Status Banner -->
+1714:                     <div id="frWinnerBanner" class="w-full text-center py-2 px-4 rounded-xl bg-black/80 border border-amber-500/40 shadow">
+1715:                         <span id="frWinnerText" class="text-xs font-mono font-bold text-amber-300">Select chips on board or click Spin!</span>
+1716:                     </div>
+1717:                 </div>
+1718: 
+1719:                 <!-- Chakri Betting Board & Chip Selector -->
+1720:                 <div class="lg:col-span-7 space-y-3">
+1721:                     <!-- Chip Selector -->
+1722:                     <div class="bg-black/60 p-3 rounded-2xl border border-amber-500/30 flex items-center justify-between gap-2 overflow-x-auto">
+1723:                         <span class="text-xs font-mono font-bold text-slate-300 shrink-0">SELECT CHIP:</span>
+1724:                         <div class="flex items-center gap-2">
+1725:                             <button onclick="selectFrChip(1)" id="frChip_1" class="w-10 h-10 rounded-full bg-slate-700 text-white font-black text-xs border-2 border-transparent shadow hover:scale-105 active:scale-95 transition flex items-center justify-center">1</button>
+1726:                             <button onclick="selectFrChip(5)" id="frChip_5" class="w-10 h-10 rounded-full bg-blue-600 text-white font-black text-xs border-2 border-transparent shadow hover:scale-105 active:scale-95 transition flex items-center justify-center">5</button>
+1727:                             <button onclick="selectFrChip(10)" id="frChip_10" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-black text-xs border-2 border-transparent shadow hover:scale-105 active:scale-95 transition flex items-center justify-center">10</button>
+1728:                             <button onclick="selectFrChip(50)" id="frChip_50" class="w-10 h-10 rounded-full bg-purple-600 text-white font-black text-xs border-2 border-transparent shadow hover:scale-105 active:scale-95 transition flex items-center justify-center">50</button>
+1729:                             <button onclick="selectFrChip(100)" id="frChip_100" class="w-10 h-10 rounded-full bg-amber-500 text-purple-950 font-black text-xs border-2 border-white shadow-lg scale-110 flex items-center justify-center">100</button>
+1730:                             <button onclick="selectFrChip(500)" id="frChip_500" class="w-10 h-10 rounded-full bg-rose-600 text-white font-black text-xs border-2 border-transparent shadow hover:scale-105 active:scale-95 transition flex items-center justify-center">500</button>
+1731:                         </div>
+1732:                     </div>
+1733: 
+1734:              

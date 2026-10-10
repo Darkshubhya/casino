@@ -1,0 +1,139 @@
+Created At: 2026-10-02T15:41:11+05:30
+Completed At: 2026-10-02T15:41:12+05:30
+File Path: `file:///c:/Users/vedan/OneDrive/Documents/betting%20app/index.html`
+Total Lines: 2614
+Total Bytes: 167149
+Showing lines 1550 to 1680
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1550:             currentCategory = cat;
+1551:             document.querySelectorAll('.cat-pill').forEach(btn => {
+1552:                 btn.className = "cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800";
+1553:             });
+1554:             const activeId = `catTab_${cat.replace(/[^a-zA-Z0-9]/g, '_')}`;
+1555:             const activeBtn = document.getElementById(activeId);
+1556:             if (activeBtn) activeBtn.className = "cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap bg-amber-500 text-purple-950 font-black shadow";
+1557:             renderGamesGrid();
+1558:         }
+1559: 
+1560:         function filterLobbyGames() {
+1561:             searchQuery = document.getElementById('gameSearchInput').value;
+1562:             renderGamesGrid();
+1563:         }
+1564: 
+1565:         function handleHeaderGameSearch(val) {
+1566:             searchQuery = val;
+1567:             const input = document.getElementById('gameSearchInput');
+1568:             if (input) input.value = val;
+1569:             returnToLobby();
+1570:             renderGamesGrid();
+1571:         }
+1572: 
+1573:         function populateQuickSelect() {
+1574:             const sel = document.getElementById('gameQuickSelect');
+1575:             if (!sel) return;
+1576:             sel.innerHTML = '<option value="">⚡ Switch Game...</option>';
+1577:             GAMES.forEach(g => {
+1578:                 const opt = document.createElement('option');
+1579:                 opt.value = g.id;
+1580:                 opt.innerText = `${g.icon} ${g.name}`;
+1581:                 sel.appendChild(opt);
+1582:             });
+1583:         }
+1584: 
+1585:         // ==============================================
+1586:         // ROUTING & OPENING GAMES
+1587:         // ==============================================
+1588:         let activeGameId = null;
+1589: 
+1590:         function openGame(gameId) {
+1591:             if (!gameId) return;
+1592:             playSound('tick');
+1593:             activeGameId = gameId;
+1594: 
+1595:             document.getElementById('lobbyContainer').classList.add('hidden');
+1596:             document.getElementById('activeGameBar').classList.remove('hidden');
+1597: 
+1598:             const gameMeta = GAMES.find(g => g.id === gameId) || { name: gameId, icon: "🎮", category: "Casino" };
+1599:             document.getElementById('activeGameTitle').innerText = gameMeta.name;
+1600:             document.getElementById('activeGameIcon').innerText = gameMeta.icon;
+1601:             document.getElementById('activeGameCategoryBadge').innerText = `${gameMeta.category} • ${gameMeta.badge || ''}`;
+1602: 
+1603:             // Hide all stages
+1604:             const stages = [
+1605:                 'gameCarromContainer', 'gameLudoContainer', 'gameBigsmallContainer',
+1606:                 'gameDragontigerContainer', 'gameAndarbaharContainer', 'gameSevenupContainer',
+1607:                 'gameTeenpattiContainer', 'gamePlinkoContainer', 'gamePenaltyContainer',
+1608:                 'gameCricketContainer', 'gameCoinflipContainer', 'gameSnakesladdersContainer',
+1609:                 'gameScratchContainer', 'gameDynamicArenaContainer', 'gameRouletteContainer',
+1610:                 'gameAviatorContainer', 'gameColorContainer', 'gameMinesContainer', 'gameSlotsContainer'
+1611:             ];
+1612:             stages.forEach(id => {
+1613:                 const el = document.getElementById(id);
+1614:                 if (el) el.classList.add('hidden');
+1615:             });
+1616: 
+1617:             // Route to specific arena
+1618:             if (gameId === 'carrom') {
+1619:                 document.getElementById('gameCarromContainer').classList.remove('hidden');
+1620:                 initCarromBoard();
+1621:             } else if (gameId === 'ludo') {
+1622:                 document.getElementById('gameLudoContainer').classList.remove('hidden');
+1623:                 initLudoBoard();
+1624:             } else if (gameId === 'bigsmall') {
+1625:                 document.getElementById('gameBigsmallContainer').classList.remove('hidden');
+1626:                 initBigSmallArena();
+1627:             } else if (gameId === 'dragontiger') {
+1628:                 document.getElementById('gameDragontigerContainer').classList.remove('hidden');
+1629:             } else if (gameId === 'andarbahar') {
+1630:                 document.getElementById('gameAndarbaharContainer').classList.remove('hidden');
+1631:             } else if (gameId === 'sevenup') {
+1632:                 document.getElementById('gameSevenupContainer').classList.remove('hidden');
+1633:             } else if (gameId === 'teenpatti') {
+1634:                 document.getElementById('gameTeenpattiContainer').classList.remove('hidden');
+1635:             } else if (gameId === 'plinko') {
+1636:                 document.getElementById('gamePlinkoContainer').classList.remove('hidden');
+1637:                 initPlinkoCanvas();
+1638:             } else if (gameId === 'penalty') {
+1639:                 document.getElementById('gamePenaltyContainer').classList.remove('hidden');
+1640:             } else if (gameId === 'cricket') {
+1641:                 document.getElementById('gameCricketContainer').classList.remove('hidden');
+1642:             } else if (gameId === 'coinflip') {
+1643:                 document.getElementById('gameCoinflipContainer').classList.remove('hidden');
+1644:             } else if (gameId === 'snakesladders') {
+1645:                 document.getElementById('gameSnakesladdersContainer').classList.remove('hidden');
+1646:                 initSnakeLadderCanvas();
+1647:             } else if (gameId === 'scratch') {
+1648:                 document.getElementById('gameScratchContainer').classList.remove('hidden');
+1649:                 buyScratchCard();
+1650:             } else if (gameId === 'roulette') {
+1651:                 document.getElementById('gameRouletteContainer').classList.remove('hidden');
+1652:                 drawFunRouletteWheel(0, 0);
+1653:             } else if (gameId === 'aviator') {
+1654:                 document.getElementById('gameAviatorContainer').classList.remove('hidden');
+1655:                 drawAviatorStatic();
+1656:             } else if (gameId === 'color') {
+1657:                 document.getElementById('gameColorContainer').classList.remove('hidden');
+1658:             } else if (gameId === 'mines') {
+1659:                 document.getElementById('gameMinesContainer').classList.remove('hidden');
+1660:                 initMinesGrid();
+1661:             } else if (gameId === 'slots') {
+1662:                 document.getElementById('gameSlotsContainer').classList.remove('hidden');
+1663:             } else {
+1664:                 // Dynamic Visual Arena
+1665:                 document.getElementById('gameDynamicArenaContainer').classList.remove('hidden');
+1666:                 initDynamicArena(gameMeta);
+1667:             }
+1668: 
+1669:             window.scrollTo({ top: 0, behavior: 'smooth' });
+1670:         }
+1671: 
+1672:         function returnToLobby() {
+1673:             playSound('tick');
+1674:             activeGameId = null;
+1675:             document.getElementById('activeGameBar').classList.add('hidden');
+1676:             const stages = [
+1677:                 'gameCarromContainer', 'gameLudoContainer', 'gameBigsmallContainer',
+1678:                 'gameDragontigerContainer', 'gameAndarbaharContainer', 'gameSevenupContainer',
+1679:                 'gameTeenpattiContainer', 'gamePlinkoContainer', 'gamePenaltyContainer',
+1680:                 'gameCricketContainer', 'gameCoinflipContainer', 'gameSnakesladdersContainer',
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
